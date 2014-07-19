@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.vibron_class &mdash; Trapped Ion Sim  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Trapped Ion Sim  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for src.vibron_class</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c">#</span>
+<span class="c"># Author:  Mario S. Könz &lt;mskoenz@gmx.net&gt;</span>
+<span class="c"># Date:    19.07.2014 12:30:05 CEST</span>
+<span class="c"># File:    vibron_class.py</span>
+
+<span class="kn">from</span> <span class="nn">.src_import</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="vibron_holder"><a class="viewcode-back" href="../../src.html#src.vibron_class.vibron_holder">[docs]</a><span class="k">class</span> <span class="nc">vibron_holder</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    global class that keeps track of all created vibrons.</span>
+<span class="sd">    a global instance is created in this file.</span>
+<span class="sd">    </span>
+<span class="sd">    :ivar vibron_list: contains all vibrons. the vibrons add themselves automatic to `vibrons_holder_` when constructed.</span>
+<span class="sd">    :ivar current_dims: contains the the dimensions of the vibrons.</span>
+<span class="sd">    :ivar N: contains the total dimensions of the vibron space (i.e. multiply all entries of :attr:`current_dims`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="vibron_holder.__init__"><a class="viewcode-back" href="../../src.html#src.vibron_class.vibron_holder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the constructor just calls :meth:`clear`</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="vibron_holder.destroy_correction"><a class="viewcode-back" href="../../src.html#src.vibron_class.vibron_holder.destroy_correction">[docs]</a>    <span class="k">def</span> <span class="nf">destroy_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vibron</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the vibrons don&#39;t know how many other atoms there are and cannot provide a correct annihilator that acts on the global state. this  function fixes this by applying the correct tensor-product with the identities of all other vibrons.</span>
+<span class="sd">        </span>
+<span class="sd">        :param vibron: an vibron of type :class:`vibron`</span>
+<span class="sd">        :returns: the corrected :attr:`vibron.destroy`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#apply all identities to the new annihilator</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_dims</span><span class="p">):</span>
+            <span class="n">vibron</span><span class="o">.</span><span class="n">destroy</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">qeye</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">vibron</span><span class="o">.</span><span class="n">destroy</span><span class="p">)</span>
+            
+        <span class="c">#correct all current vibrons by adding (tensor) the identity of the new vibron</span>
+        <span class="k">for</span> <span class="n">vb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vibron_list</span><span class="p">:</span>
+            <span class="n">vb</span><span class="o">.</span><span class="n">destroy</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">vb</span><span class="o">.</span><span class="n">destroy</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">qeye</span><span class="p">(</span><span class="n">vibron</span><span class="o">.</span><span class="n">N</span><span class="p">))</span>
+        
+        <span class="c">#update internal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vibron</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">*=</span> <span class="n">vibron</span><span class="o">.</span><span class="n">N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vibron_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vibron</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">vibron</span><span class="o">.</span><span class="n">destroy</span>
+    </div>
+<div class="viewcode-block" id="vibron_holder.state"><a class="viewcode-back" href="../../src.html#src.vibron_class.vibron_holder.state">[docs]</a>    <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        this function returns the global state of all vibrons. it takes all single states and tensors them together.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: a `qutip.Qobj` containing the density matrix of the collective vibron state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vibron_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vibron_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">state</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vibron_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
+    </div>
+<div class="viewcode-block" id="vibron_holder.clear"><a class="viewcode-back" href="../../src.html#src.vibron_class.vibron_holder.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        clears the internal list of atoms and dimensions.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vibron_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_dims</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="mi">1</span>
+</div></div>
+<span class="n">vibron_holder_</span> <span class="o">=</span> <span class="n">vibron_holder</span><span class="p">()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">the only instance of atom_holder that should exist.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="vibron"><a class="viewcode-back" href="../../src.html#src.vibron_class.vibron">[docs]</a><span class="k">class</span> <span class="nc">vibron</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    this class stores information for a vibron.</span>
+<span class="sd">    </span>
+<span class="sd">    :ivar freq: the frequency of the vibrational mode</span>
+<span class="sd">    :ivar state: the density matrix of the initial internal state of the vibron</span>
+<span class="sd">    :ivar N: the dimension of the vibron-space</span>
+<span class="sd">    :ivar destroy: the annihilator operator of the vibron</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">vibron_holder_</span>
+    
+<div class="viewcode-block" id="vibron.__init__"><a class="viewcode-back" href="../../src.html#src.vibron_class.vibron.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="s">&quot;none&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the vibron-constructor</span>
+<span class="sd">        </span>
+<span class="sd">        :param freq: the frequency of the vibrational mode</span>
+<span class="sd">        :param N: the dimension of the vibron (if you work with thermal states always check that this is large enough)</span>
+<span class="sd">        :param state: optional parameter of the initial density matrix. needs to be convertable to `qutip.Qobj`. if no state is given, it will be set to the pure groundstate.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">N</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s">&quot;none&quot;</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">fock_dm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Qobj</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">destroy</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">destroy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+        
+        <span class="c">#correct and register the vibron according to the other vibrons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">destroy</span> <span class="o">=</span> <span class="n">vibron_holder_</span><span class="o">.</span><span class="n">destroy_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Mario S. Koenz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
