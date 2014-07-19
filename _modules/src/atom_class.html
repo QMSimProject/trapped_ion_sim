@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.atom_class &mdash; Trapped Ion Sim  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Trapped Ion Sim  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for src.atom_class</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c">#</span>
+<span class="c"># Author:  Mario S. Könz &lt;mskoenz@gmx.net&gt;</span>
+<span class="c"># Date:    19.07.2014 12:27:41 CEST</span>
+<span class="c"># File:    atom_class.py</span>
+
+<span class="kn">from</span> <span class="nn">.src_import</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="atom_holder"><a class="viewcode-back" href="../../src.html#src.atom_class.atom_holder">[docs]</a><span class="k">class</span> <span class="nc">atom_holder</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    global class that keeps track of all created atoms.</span>
+<span class="sd">    a global instance is created in this file.</span>
+<span class="sd">    </span>
+<span class="sd">    :ivar atom_list: contains all atoms. the atoms add themselves automatic to `atom_holder_` when constructed.</span>
+<span class="sd">    :ivar current_dims: contains the the dimensions of the atoms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="atom_holder.__init__"><a class="viewcode-back" href="../../src.html#src.atom_class.atom_holder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the constructor just calls :meth:`clear`</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="atom_holder.trans_correction"><a class="viewcode-back" href="../../src.html#src.atom_class.atom_holder.trans_correction">[docs]</a>    <span class="k">def</span> <span class="nf">trans_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the atoms don&#39;t know how many other atoms there are and cannot provide a correct transition matrix that acts on the global state. this  function fixes this by applying the correct tensor-product with the identities of all other atoms.</span>
+<span class="sd">        </span>
+<span class="sd">        :param atom: an atom of type :class:`atom`</span>
+<span class="sd">        :returns: the corrected :attr:`atom.trans` list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#apply all identities to the new trans list</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_dims</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">trans</span><span class="p">:</span>
+                <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">qeye</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        
+        <span class="c">#correct all current atoms by adding (tensor) the identity of the new atom</span>
+        <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">at</span><span class="o">.</span><span class="n">trans</span><span class="p">)):</span>
+                <span class="n">at</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">at</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">q</span><span class="o">.</span><span class="n">qeye</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">N</span><span class="p">))</span>
+        
+        <span class="c">#update internal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">atom</span><span class="o">.</span><span class="n">trans</span>
+    </div>
+<div class="viewcode-block" id="atom_holder.state"><a class="viewcode-back" href="../../src.html#src.atom_class.atom_holder.state">[docs]</a>    <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        this function returns the global state of all particles. it takes all single states and tensors them together.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: a `qutip.Qobj` containing the density matrix of the collective atom state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">state</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
+    </div>
+<div class="viewcode-block" id="atom_holder.clear"><a class="viewcode-back" href="../../src.html#src.atom_class.atom_holder.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        clears the internal list of atoms and dimensions.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_dims</span> <span class="o">=</span> <span class="p">[]</span>
+</div></div>
+<span class="n">atom_holder_</span> <span class="o">=</span> <span class="n">atom_holder</span><span class="p">()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">the only instance of atom_holder that should exist.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="atom"><a class="viewcode-back" href="../../src.html#src.atom_class.atom">[docs]</a><span class="k">class</span> <span class="nc">atom</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    this class stores information for an atom.</span>
+<span class="sd">    </span>
+<span class="sd">    :ivar energy_levels: a list of increasing energy levels</span>
+<span class="sd">    :ivar state: the density matrix of the initial internal state of the atom</span>
+<span class="sd">    :ivar N: the dimension of the atom-space</span>
+<span class="sd">    :ivar trans: a list of pairs for all transitions possible. each pair contains [transition frequency, transition matrix], where the transition matrix is 0 except for one entry that is 1. There are :attr:`N` * (:attr:`N` - 1) / 2 transitions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">atom_holder_</span>
+    
+<div class="viewcode-block" id="atom.__init__"><a class="viewcode-back" href="../../src.html#src.atom_class.atom.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="s">&quot;none&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the atom-constructor</span>
+<span class="sd">        </span>
+<span class="sd">        :param levels: a list of increasing energy levels</span>
+<span class="sd">        :param state: optional parameter of the initial density matrix. needs to be convertable to `qutip.Qobj`. if no state is given, it will be set to the pure groundstate.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">energy_levels</span> <span class="o">=</span> <span class="n">levels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energy_levels</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="s">&quot;none&quot;</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">fock_dm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Qobj</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c">#create all transitions</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">):</span>
+                <span class="n">trans_energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energy_levels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy_levels</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">))</span>
+                <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">trans_energy</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">Qobj</span><span class="p">(</span><span class="n">m</span><span class="p">)])</span>
+        <span class="c">#and correct the matrix with the propper spaces of other atoms</span>
+        <span class="c">#register the atom in the global atom_holder_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trans</span> <span class="o">=</span> <span class="n">atom_holder_</span><span class="o">.</span><span class="n">trans_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        </div>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        used by the print() function for nice output.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: a string representation of the atom</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">+=</span> <span class="s">&quot;atom</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="n">r</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; enegry levels: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energy_levels</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="n">r</span> <span class="o">+=</span> <span class="s">&quot;current state: &quot;</span>
+        <span class="n">r</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span>
+    
+<div class="viewcode-block" id="atom.transition"><a class="viewcode-back" href="../../src.html#src.atom_class.atom.transition">[docs]</a>    <span class="k">def</span> <span class="nf">transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get function</span>
+<span class="sd">        </span>
+<span class="sd">        :param nr: the position of the required pair</span>
+<span class="sd">        :returns: the pair nr of the list :attr:`trans`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trans</span><span class="p">[</span><span class="n">nr</span><span class="p">]</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Mario S. Koenz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

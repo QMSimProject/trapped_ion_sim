@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.addon.parameter &mdash; Trapped Ion Sim  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="Trapped Ion Sim  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for src.addon.parameter</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c">#</span>
+<span class="c"># Author:  Mario S. Könz &lt;mskoenz@gmx.net&gt;</span>
+<span class="c"># Date:    06.06.2013 20:49:45 EDT</span>
+<span class="c"># File:    parameter.py</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">.color</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.helper</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="c">#------------------- parameter class ------------------- </span>
+<div class="viewcode-block" id="parameter_class"><a class="viewcode-back" href="../../../src.addon.html#src.addon.parameter.parameter_class">[docs]</a><span class="k">class</span> <span class="nc">parameter_class</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<div class="viewcode-block" id="parameter_class.__init__"><a class="viewcode-back" href="../../../src.addon.html#src.addon.parameter.parameter_class.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reserved_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;arg&quot;</span><span class="p">,</span> <span class="s">&quot;flag&quot;</span><span class="p">]</span>
+        
+        <span class="c">#if a key has an &quot;_&quot; at the end it is treated as &quot;hidden&quot; in the sense that it isn&#39;t printed</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&quot;print_&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span><span class="p">;</span>
+    </div>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">[</span><span class="s">&quot;print_&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;_&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]:</span> <span class="c">#prevent newline at the start</span>
+                 <span class="n">out</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">GREENB_</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;:</span><span class="se">\t</span><span class="s">&quot;</span> <span class="o">+</span> <span class="n">GREEN_</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">+</span> <span class="n">NONE_</span>
+            
+        <span class="k">return</span> <span class="n">out</span>
+    
+<div class="viewcode-block" id="parameter_class.read"><a class="viewcode-back" href="../../../src.addon.html#src.addon.parameter.parameter_class.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argv</span><span class="p">):</span>
+        <span class="n">pas</span> <span class="o">=</span> <span class="bp">False</span>
+        
+        <span class="c">#------------------- regex for = notation ------------------- </span>
+        <span class="c"># &quot;p=1&quot;, &quot;p= 1&quot;, &quot;p =1&quot; and &quot;p = 1&quot; is valid notation, here I transform all to the form &quot;p=1&quot;</span>
+        <span class="c"># &quot;p= &quot; and &quot;p =&quot; is invalid notation </span>
+        
+        <span class="n">text</span> <span class="o">=</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot; ?= ?&quot;</span><span class="p">,</span> <span class="s">&quot;=&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        
+        <span class="n">argv</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+        
+        <span class="c">#------------------- some nice errors ------------------- </span>
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">argv</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;-&quot;</span> <span class="ow">and</span> <span class="n">w</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&quot;flags cannot be assigned with a equal sigh&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">w</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">w</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">):</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&quot;too many = signs, check syntax&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;=&quot;</span><span class="p">:</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&quot;no assignment after equal sign&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;-&quot;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&quot;syntax not correct, check -&quot;</span><span class="p">)</span>
+                
+        
+        <span class="c">#------------------- normal set doesn&#39;t work bc of reserved_names check ------------------- </span>
+        <span class="nb">dict</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;arg&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;flag&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">argv</span><span class="p">)):</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c">#checking if = sign</span>
+            <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_set</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+                        <span class="n">warning</span><span class="p">(</span><span class="s">&quot;parameter {0} already set to {1} -&gt; overwrite to {2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">val</span><span class="p">))</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_number</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                <span class="k">continue</span>
+                
+            <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;-&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span> <span class="ow">and</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;-&#39;</span> <span class="ow">and</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="c">#parameter</span>
+                    
+                    <span class="c">#------------------- just checking for false input ------------------- </span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_set</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                        <span class="n">warning</span><span class="p">(</span><span class="s">&quot;parameter {0} already set to {1} -&gt; overwrite to {2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="bp">self</span><span class="p">[</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="c">#------------------- setting the parameter ------------------- </span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span> <span class="o">=</span> <span class="n">to_number</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">pas</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c">#flag</span>
+                    <span class="c">#------------------- just checking for false input ------------------- </span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag_set</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                        <span class="n">warning</span><span class="p">(</span><span class="s">&quot;flag {0} was already set&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c">#------------------- setting the flag ------------------- </span>
+                        <span class="bp">self</span><span class="p">[</span><span class="s">&quot;flag&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pas</span><span class="p">:</span>
+                    <span class="n">pas</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c">#arg</span>
+                    <span class="c">#------------------- just checking for false input ------------------- </span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">arg_set</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+                        <span class="n">warning</span><span class="p">(</span><span class="s">&quot;arg {0} was already set&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c">#------------------- adding the arg ------------------- </span>
+                        <span class="bp">self</span><span class="p">[</span><span class="s">&quot;arg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+                    </div>
+<div class="viewcode-block" id="parameter_class.arg_set"><a class="viewcode-back" href="../../../src.addon.html#src.addon.parameter.parameter_class.arg_set">[docs]</a>    <span class="k">def</span> <span class="nf">arg_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s">&quot;arg&quot;</span><span class="p">]</span>
+        </div>
+<div class="viewcode-block" id="parameter_class.flag_set"><a class="viewcode-back" href="../../../src.addon.html#src.addon.parameter.parameter_class.flag_set">[docs]</a>    <span class="k">def</span> <span class="nf">flag_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flag</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">flag</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s">&quot;flag&quot;</span><span class="p">]</span>
+    </div>
+<div class="viewcode-block" id="parameter_class.param_set"><a class="viewcode-back" href="../../../src.addon.html#src.addon.parameter.parameter_class.param_set">[docs]</a>    <span class="k">def</span> <span class="nf">param_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="parameter_class.contains"><a class="viewcode-back" href="../../../src.addon.html#src.addon.parameter.parameter_class.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">arg_set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag_set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    </div>
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserved_names</span><span class="p">:</span> <span class="c">#guard reserved names</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&quot;do not use the following names: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reserved_names</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">dict</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+    </div>
+<span class="n">parameter</span> <span class="o">=</span> <span class="n">parameter_class</span><span class="p">()</span>
+
+<span class="c">#------------------- parameter action ------------------- </span>
+<div class="viewcode-block" id="bash_if"><a class="viewcode-back" href="../../../src.addon.html#src.addon.parameter.bash_if">[docs]</a><span class="k">def</span> <span class="nf">bash_if</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">flag</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">):</span> <span class="c">#normal bash cmd</span>
+            <span class="n">bash</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c">#fct call</span>
+            <span class="n">CYAN</span><span class="p">(</span><span class="s">&quot;called function: &quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">action</span><span class="p">()</span>
+    <span class="k">return</span> <span class="mi">0</span>
+</div>
+<div class="viewcode-block" id="bash"><a class="viewcode-back" href="../../../src.addon.html#src.addon.parameter.bash">[docs]</a><span class="k">def</span> <span class="nf">bash</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
+    <span class="n">CYAN</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="popen"><a class="viewcode-back" href="../../../src.addon.html#src.addon.parameter.popen">[docs]</a><span class="k">def</span> <span class="nf">popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
+    <span class="n">CYAN</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">part</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="n">part</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">part</span><span class="p">[</span><span class="mi">1</span><span class="p">:])])</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Mario S. Koenz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.matrix_plot &mdash; Trapped Ion Sim  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Trapped Ion Sim  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for src.matrix_plot</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c">#</span>
+<span class="c"># Author:  Mario S. Könz &lt;mskoenz@gmx.net&gt;</span>
+<span class="c"># Date:    03.06.2014 18:54:37 CEST</span>
+<span class="c"># File:    matrix_plot.py</span>
+
+<span class="c">#extracted/modified from the Bell state example of the QuTip framework</span>
+
+<span class="c"># Creation and manipulation of a Bell state with</span>
+<span class="c"># 3D histogram plot output.</span>
+<span class="c">#</span>
+<span class="kn">from</span> <span class="nn">.src_import</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span><span class="p">,</span> <span class="n">cm</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+
+<div class="viewcode-block" id="l_bra"><a class="viewcode-back" href="../../src.html#src.matrix_plot.l_bra">[docs]</a><span class="k">def</span> <span class="nf">l_bra</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;$\left|&#39;</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\\</span><span class="s">rangle</span><span class="se">\\</span><span class="s">right.$&#39;</span>
+</div>
+<div class="viewcode-block" id="l_ket"><a class="viewcode-back" href="../../src.html#src.matrix_plot.l_ket">[docs]</a><span class="k">def</span> <span class="nf">l_ket</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;$\left</span><span class="se">\\</span><span class="s">langle&#39;</span> <span class="o">+</span> <span class="n">s</span> <span class="o">+</span> <span class="s">&#39;|</span><span class="se">\\</span><span class="s">right.$&#39;</span>
+</div>
+<div class="viewcode-block" id="qubit_hist"><a class="viewcode-back" href="../../src.html#src.matrix_plot.qubit_hist">[docs]</a><span class="k">def</span> <span class="nf">qubit_hist</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">xlabels</span> <span class="o">=</span> <span class="s">&quot;auto&quot;</span><span class="p">,</span> <span class="n">ylabels</span> <span class="o">=</span> <span class="s">&quot;auto&quot;</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">save_name</span> <span class="o">=</span> <span class="s">&quot;none&quot;</span><span class="p">):</span>
+    <span class="c">#------------------- generate labels automatically ------------------- </span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">autolabels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">recursion</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">current_label</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">autolabels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l_bra</span><span class="p">(</span><span class="n">current_label</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">recursion</span><span class="p">(</span><span class="n">lst</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">current_label</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            
+    <span class="n">recursion</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+    
+    <span class="c">#------------------- assing if not provided ------------------- </span>
+    <span class="k">if</span> <span class="n">xlabels</span> <span class="o">==</span> <span class="s">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="n">xlabels</span> <span class="o">=</span> <span class="n">autolabels</span>
+    <span class="k">if</span> <span class="n">ylabels</span> <span class="o">==</span> <span class="s">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="n">ylabels</span> <span class="o">=</span> <span class="n">autolabels</span>
+    
+    
+    <span class="c"># Plots density matrix 3D histogram from Qobj</span>
+    <span class="c"># xlabels and ylabels are list of strings for axes tick labels</span>
+    <span class="n">num_elem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>       <span class="c"># num. of elements to plot</span>
+    <span class="n">xpos</span><span class="p">,</span> <span class="n">ypos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">range</span><span class="p">(</span><span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">xpos</span> <span class="o">=</span> <span class="n">xpos</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span>  <span class="c"># center bars on integer value of x-axis</span>
+    <span class="n">ypos</span> <span class="o">=</span> <span class="n">ypos</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span>  <span class="c"># center bars on integer value of y-axis</span>
+    <span class="n">zpos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_elem</span><span class="p">)</span>         <span class="c"># all bars start at z=0</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_elem</span><span class="p">)</span>      <span class="c"># width of bars in x-direction</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">dx</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c"># width of bars in y-direction (same as x-dir here)</span>
+    <span class="n">dz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">Q</span><span class="o">.</span><span class="n">full</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>  <span class="c"># height of bars from density matrix</span>
+
+    <span class="c"># generate list of colors for probability data</span>
+    <span class="c"># add +-0.1 in case all elements are the same (colorbar will fail).</span>
+    <span class="n">nrm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c">#~ nrm = mpl.colors.Normalize(min(dz) - 0.1, max(dz) + 0.1)</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">jet</span><span class="p">(</span><span class="n">nrm</span><span class="p">(</span><span class="n">dz</span><span class="p">))</span>
+
+    <span class="c"># plot figure</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">Axes3D</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">azim</span><span class="o">=-</span><span class="mi">50</span><span class="p">,</span> <span class="n">elev</span><span class="o">=</span><span class="mi">55</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">bar3d</span><span class="p">(</span><span class="n">xpos</span><span class="p">,</span> <span class="n">ypos</span><span class="p">,</span> <span class="n">zpos</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+
+    <span class="c"># set x-axis tick labels and label font size. set x-ticks to integers</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">w_xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">IndexLocator</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">xlabels</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+
+    <span class="c"># set y-axis tick labels and label font size. set y-ticks to integers</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">w_yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">IndexLocator</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ylabels</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+
+    <span class="c"># remove z-axis tick labels by moving them outside the plot range</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">w_zaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">IndexLocator</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="c"># set the plot range in the z-direction to fit data</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_zlim3d</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="c">#~ ax.set_zlim3d([min(dz) - 0.1, max(dz) + 0.1])</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="c"># add colorbar with color range normalized to data</span>
+    <span class="n">cax</span><span class="p">,</span> <span class="n">kw</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colorbar</span><span class="o">.</span><span class="n">make_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=.</span><span class="mi">75</span><span class="p">,</span> <span class="n">pad</span><span class="o">=.</span><span class="mo">02</span><span class="p">)</span>
+    <span class="n">cb1</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colorbar</span><span class="o">.</span><span class="n">ColorbarBase</span><span class="p">(</span><span class="n">cax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">jet</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">nrm</span><span class="p">)</span>
+    <span class="n">cb1</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s">&quot;Probability&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_name</span> <span class="o">==</span> <span class="s">&quot;none&quot;</span><span class="p">:</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_name</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Mario S. Koenz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

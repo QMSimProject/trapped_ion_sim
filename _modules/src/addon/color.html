@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.addon.color &mdash; Trapped Ion Sim  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="Trapped Ion Sim  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for src.addon.color</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c">#</span>
+<span class="c"># Author:  Mario S. Könz &lt;mskoenz@gmx.net&gt;</span>
+<span class="c"># Date:    06.06.2013 15:00:17 EDT</span>
+<span class="c"># File:    color.py</span>
+
+<span class="n">NO_COLOR</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="c">#~ NO_COLOR = True</span>
+
+<span class="n">ALL_COLORS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;CLRSCR&quot;</span><span class="p">,</span> <span class="s">&quot;BLACK&quot;</span><span class="p">,</span> <span class="s">&quot;BLACKB&quot;</span><span class="p">,</span> <span class="s">&quot;RED&quot;</span><span class="p">,</span> <span class="s">&quot;REDB&quot;</span><span class="p">,</span> <span class="s">&quot;GREEN&quot;</span><span class="p">,</span> <span class="s">&quot;GREENB&quot;</span><span class="p">,</span> <span class="s">&quot;YELLOW&quot;</span><span class="p">,</span> <span class="s">&quot;YELLOWB&quot;</span><span class="p">,</span> <span class="s">&quot;BLUE&quot;</span><span class="p">,</span> <span class="s">&quot;BLUEB&quot;</span><span class="p">,</span> <span class="s">&quot;MAGENTA&quot;</span><span class="p">,</span> <span class="s">&quot;MAGENTAB&quot;</span><span class="p">,</span> <span class="s">&quot;CYAN&quot;</span><span class="p">,</span> <span class="s">&quot;CYANB&quot;</span><span class="p">,</span> <span class="s">&quot;WHITE&quot;</span><span class="p">,</span> <span class="s">&quot;WHITEB&quot;</span><span class="p">,</span> <span class="s">&quot;BLACKBG&quot;</span><span class="p">,</span> <span class="s">&quot;REDBG&quot;</span><span class="p">,</span> <span class="s">&quot;GREENBG&quot;</span><span class="p">,</span> <span class="s">&quot;YELLOWBG&quot;</span><span class="p">,</span> <span class="s">&quot;BLUEBG&quot;</span><span class="p">,</span> <span class="s">&quot;MAGENTABG&quot;</span><span class="p">,</span> <span class="s">&quot;CYANBG&quot;</span><span class="p">,</span> <span class="s">&quot;WHITEBG&quot;</span><span class="p">,</span> <span class="s">&quot;NONE&quot;</span><span class="p">]</span>
+<span class="n">ALL_COLORS_IMPL</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;</span><span class="se">\033</span><span class="s">[2J</span><span class="se">\033</span><span class="s">[100A&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;30m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[1;30m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;31m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[1;31m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;32m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[1;32m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;33m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[1;33m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;34m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[1;34m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;35m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[1;35m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;36m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[1;36m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;37m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[1;37m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;40m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;41m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;42m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;43m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;44m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;45m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;46m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;47m&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\033</span><span class="s">[0m&quot;</span><span class="p">]</span>
+
+<span class="k">if</span> <span class="n">NO_COLOR</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ALL_COLORS</span><span class="p">)):</span>
+        <span class="k">exec</span><span class="p">(</span><span class="n">ALL_COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;_ = &quot;&quot;&#39;</span><span class="p">)</span>
+        <span class="k">exec</span><span class="p">(</span><span class="s">&quot;def &quot;</span> <span class="o">+</span> <span class="n">ALL_COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;(out, end = </span><span class="se">\&quot;\\</span><span class="s">n</span><span class="se">\&quot;</span><span class="s">):</span><span class="se">\n\t</span><span class="s">print(&quot;</span> <span class="o">+</span> <span class="n">ALL_COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span>  <span class="s">&quot;_ + str(out) + NONE_ + end),&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ALL_COLORS</span><span class="p">)):</span>
+        <span class="k">exec</span><span class="p">(</span><span class="n">ALL_COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;_ = &quot;&#39;</span> <span class="o">+</span> <span class="n">ALL_COLORS_IMPL</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;&quot;&#39;</span><span class="p">)</span>
+        <span class="k">exec</span><span class="p">(</span><span class="s">&quot;def &quot;</span> <span class="o">+</span> <span class="n">ALL_COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;(out, end = </span><span class="se">\&quot;\\</span><span class="s">n</span><span class="se">\&quot;</span><span class="s">):</span><span class="se">\n\t</span><span class="s">print(&quot;</span> <span class="o">+</span> <span class="n">ALL_COLORS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span>  <span class="s">&quot;_ + str(out) + NONE_ + end),&quot;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Mario S. Koenz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

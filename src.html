@@ -1,0 +1,812 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src package &mdash; Trapped Ion Sim  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Trapped Ion Sim  documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">Trapped Ion Sim  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="src-package">
+<h1>src package<a class="headerlink" href="#src-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src.addon.html">src.addon package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.addon.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.addon.html#module-src.addon.color">src.addon.color module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.addon.html#module-src.addon.helper">src.addon.helper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.addon.html#module-src.addon.optical">src.addon.optical module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.addon.html#module-src.addon.parameter">src.addon.parameter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.addon.html#module-src.addon">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.atom_class">
+<span id="src-atom-class-module"></span><h2>src.atom_class module<a class="headerlink" href="#module-src.atom_class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.atom_class.atom_holder">
+<em class="property">class </em><tt class="descclassname">src.atom_class.</tt><tt class="descname">atom_holder</tt><a class="reference internal" href="_modules/src/atom_class.html#atom_holder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.atom_class.atom_holder" title="Permalink to this definition">¶</a></dt>
+<dd><p>global class that keeps track of all created atoms.
+a global instance is created in this file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>atom_list</strong> &#8211; contains all atoms. the atoms add themselves automatic to <cite>atom_holder_</cite> when constructed.</li>
+<li><strong>current_dims</strong> &#8211; contains the the dimensions of the atoms.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="src.atom_class.atom_holder.__init__">
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/atom_class.html#atom_holder.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.atom_class.atom_holder.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>the constructor just calls <a class="reference internal" href="#src.atom_class.atom_holder.clear" title="src.atom_class.atom_holder.clear"><tt class="xref py py-meth docutils literal"><span class="pre">clear()</span></tt></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.atom_class.atom_holder.trans_correction">
+<tt class="descname">trans_correction</tt><big>(</big><em>atom</em><big>)</big><a class="reference internal" href="_modules/src/atom_class.html#atom_holder.trans_correction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.atom_class.atom_holder.trans_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>the atoms don&#8217;t know how many other atoms there are and cannot provide a correct transition matrix that acts on the global state. this  function fixes this by applying the correct tensor-product with the identities of all other atoms.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>atom</strong> &#8211; an atom of type <a class="reference internal" href="#src.atom_class.atom" title="src.atom_class.atom"><tt class="xref py py-class docutils literal"><span class="pre">atom</span></tt></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the corrected <tt class="xref py py-attr docutils literal"><span class="pre">atom.trans</span></tt> list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.atom_class.atom_holder.state">
+<tt class="descname">state</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/atom_class.html#atom_holder.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.atom_class.atom_holder.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>this function returns the global state of all particles. it takes all single states and tensors them together.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a <cite>qutip.Qobj</cite> containing the density matrix of the collective atom state</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.atom_class.atom_holder.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/atom_class.html#atom_holder.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.atom_class.atom_holder.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>clears the internal list of atoms and dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="src.atom_class.atom_holder_">
+<tt class="descclassname">src.atom_class.</tt><tt class="descname">atom_holder_</tt><em class="property"> = &lt;src.atom_class.atom_holder instance at 0x2ab5c1a0b908&gt;</em><a class="headerlink" href="#src.atom_class.atom_holder_" title="Permalink to this definition">¶</a></dt>
+<dd><p>the only instance of atom_holder that should exist.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="src.atom_class.atom">
+<em class="property">class </em><tt class="descclassname">src.atom_class.</tt><tt class="descname">atom</tt><big>(</big><em>levels</em>, <em>state='none'</em><big>)</big><a class="reference internal" href="_modules/src/atom_class.html#atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.atom_class.atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>this class stores information for an atom.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>energy_levels</strong> &#8211; a list of increasing energy levels</li>
+<li><strong>state</strong> &#8211; the density matrix of the initial internal state of the atom</li>
+<li><strong>N</strong> &#8211; the dimension of the atom-space</li>
+<li><strong>trans</strong> &#8211; a list of pairs for all transitions possible. each pair contains [transition frequency, transition matrix], where the transition matrix is 0 except for one entry that is 1. There are <tt class="xref py py-attr docutils literal"><span class="pre">N</span></tt> * (<tt class="xref py py-attr docutils literal"><span class="pre">N</span></tt> - 1) / 2 transitions.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="src.atom_class.atom.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>levels</em>, <em>state='none'</em><big>)</big><a class="reference internal" href="_modules/src/atom_class.html#atom.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.atom_class.atom.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>the atom-constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>levels</strong> &#8211; a list of increasing energy levels</li>
+<li><strong>state</strong> &#8211; optional parameter of the initial density matrix. needs to be convertable to <cite>qutip.Qobj</cite>. if no state is given, it will be set to the pure groundstate.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.atom_class.atom.transition">
+<tt class="descname">transition</tt><big>(</big><em>nr</em><big>)</big><a class="reference internal" href="_modules/src/atom_class.html#atom.transition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.atom_class.atom.transition" title="Permalink to this definition">¶</a></dt>
+<dd><p>get function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nr</strong> &#8211; the position of the required pair</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the pair nr of the list <tt class="xref py py-attr docutils literal"><span class="pre">trans</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.gui">
+<span id="src-gui-module"></span><h2>src.gui module<a class="headerlink" href="#module-src.gui" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.gui.Q2LaserWidget">
+<em class="property">class </em><tt class="descclassname">src.gui.</tt><tt class="descname">Q2LaserWidget</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2LaserWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2LaserWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QWidget</span></tt></p>
+<dl class="method">
+<dt id="src.gui.Q2LaserWidget.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2LaserWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2LaserWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2LaserWidget.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2LaserWidget.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2LaserWidget.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2LaserWidget.init_ui">
+<tt class="descname">init_ui</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2LaserWidget.init_ui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2LaserWidget.init_ui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.gui.Q2LaserWidget.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x2ab5d26b1ea8&gt;</em><a class="headerlink" href="#src.gui.Q2LaserWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.gui.Q2AtomWidget">
+<em class="property">class </em><tt class="descclassname">src.gui.</tt><tt class="descname">Q2AtomWidget</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2AtomWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2AtomWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QWidget</span></tt></p>
+<dl class="method">
+<dt id="src.gui.Q2AtomWidget.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2AtomWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2AtomWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2AtomWidget.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2AtomWidget.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2AtomWidget.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2AtomWidget.init_ui">
+<tt class="descname">init_ui</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2AtomWidget.init_ui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2AtomWidget.init_ui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.gui.Q2AtomWidget.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x2ab5d26b1ef0&gt;</em><a class="headerlink" href="#src.gui.Q2AtomWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.gui.Q2VibronWidget">
+<em class="property">class </em><tt class="descclassname">src.gui.</tt><tt class="descname">Q2VibronWidget</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2VibronWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2VibronWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QWidget</span></tt></p>
+<dl class="method">
+<dt id="src.gui.Q2VibronWidget.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2VibronWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2VibronWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2VibronWidget.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2VibronWidget.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2VibronWidget.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2VibronWidget.init_ui">
+<tt class="descname">init_ui</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2VibronWidget.init_ui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2VibronWidget.init_ui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.gui.Q2VibronWidget.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x2ab5d26b1f38&gt;</em><a class="headerlink" href="#src.gui.Q2VibronWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.gui.Q2IntegrationWidget">
+<em class="property">class </em><tt class="descclassname">src.gui.</tt><tt class="descname">Q2IntegrationWidget</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2IntegrationWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2IntegrationWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QWidget</span></tt></p>
+<dl class="method">
+<dt id="src.gui.Q2IntegrationWidget.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2IntegrationWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2IntegrationWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.gui.Q2IntegrationWidget.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x2ab5d26b1f80&gt;</em><a class="headerlink" href="#src.gui.Q2IntegrationWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.gui.Q2NumberWidget">
+<em class="property">class </em><tt class="descclassname">src.gui.</tt><tt class="descname">Q2NumberWidget</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2NumberWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2NumberWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QWidget</span></tt></p>
+<dl class="method">
+<dt id="src.gui.Q2NumberWidget.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2NumberWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2NumberWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.gui.Q2NumberWidget.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x2ab5d26b1fc8&gt;</em><a class="headerlink" href="#src.gui.Q2NumberWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.gui.Q2PlotWidget">
+<em class="property">class </em><tt class="descclassname">src.gui.</tt><tt class="descname">Q2PlotWidget</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2PlotWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2PlotWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QWidget</span></tt></p>
+<dl class="method">
+<dt id="src.gui.Q2PlotWidget.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2PlotWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2PlotWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.gui.Q2PlotWidget.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x2ab5d26b7050&gt;</em><a class="headerlink" href="#src.gui.Q2PlotWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.gui.Q2DisplayWidget">
+<em class="property">class </em><tt class="descclassname">src.gui.</tt><tt class="descname">Q2DisplayWidget</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtGui.QMainWindow</span></tt></p>
+<dl class="method">
+<dt id="src.gui.Q2DisplayWidget.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2DisplayWidget.init_ui">
+<tt class="descname">init_ui</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget.init_ui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget.init_ui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2DisplayWidget.init_dynaminc_ui">
+<tt class="descname">init_dynaminc_ui</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget.init_dynaminc_ui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget.init_dynaminc_ui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2DisplayWidget.changed_sb">
+<tt class="descname">changed_sb</tt><big>(</big><em>val</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget.changed_sb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget.changed_sb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2DisplayWidget.parse">
+<tt class="descname">parse</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2DisplayWidget.save_parse">
+<tt class="descname">save_parse</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget.save_parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget.save_parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2DisplayWidget.load_parse">
+<tt class="descname">load_parse</tt><big>(</big><em>cf</em><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget.load_parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget.load_parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2DisplayWidget.save">
+<tt class="descname">save</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget.save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2DisplayWidget.load">
+<tt class="descname">load</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget.load" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.gui.Q2DisplayWidget.integrate">
+<tt class="descname">integrate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#Q2DisplayWidget.integrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.Q2DisplayWidget.integrate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.gui.Q2DisplayWidget.staticMetaObject">
+<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x2ab5d26b7098&gt;</em><a class="headerlink" href="#src.gui.Q2DisplayWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="src.gui.run_gui">
+<tt class="descclassname">src.gui.</tt><tt class="descname">run_gui</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/gui.html#run_gui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.gui.run_gui" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.integration_routine">
+<span id="src-integration-routine-module"></span><h2>src.integration_routine module<a class="headerlink" href="#module-src.integration_routine" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="src.integration_routine.default_cutoff">
+<tt class="descclassname">src.integration_routine.</tt><tt class="descname">default_cutoff</tt><em class="property"> = 100000</em><a class="headerlink" href="#src.integration_routine.default_cutoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>the default cutoff frequency used by <a class="reference internal" href="#src.integration_routine.create_hamiltonian" title="src.integration_routine.create_hamiltonian"><tt class="xref py py-func docutils literal"><span class="pre">create_hamiltonian()</span></tt></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.integration_routine.syn">
+<tt class="descclassname">src.integration_routine.</tt><tt class="descname">syn</tt><big>(</big><em>expr</em>, <em>pat</em>, <em>args</em><big>)</big><a class="reference internal" href="_modules/src/integration_routine.html#syn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.integration_routine.syn" title="Permalink to this definition">¶</a></dt>
+<dd><p>a helper function of the <a class="reference internal" href="#src.integration_routine.create_hamiltonian" title="src.integration_routine.create_hamiltonian"><tt class="xref py py-func docutils literal"><span class="pre">create_hamiltonian()</span></tt></a>. fuses the physical equation part with the laser-pattern part to a new python function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>expr</strong> &#8211; the physical equation in string representation</li>
+<li><strong>args</strong> &#8211; the dictionary that holds the values to the physical expression</li>
+<li><strong>pat</strong> &#8211; the laser pattern, see <tt class="xref py py-attr docutils literal"><span class="pre">laser.pattern</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a python function that takes the time and returns the physical expression if t is in the active pattern and 0 else</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.integration_routine.create_hamiltonian">
+<tt class="descclassname">src.integration_routine.</tt><tt class="descname">create_hamiltonian</tt><big>(</big><em>atoms</em>, <em>vibrons</em>, <em>lasers</em>, <em>_rabi</em>, <em>_eta</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/src/integration_routine.html#create_hamiltonian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.integration_routine.create_hamiltonian" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>atoms</strong> &#8211; a list of <tt class="xref py py-class docutils literal"><span class="pre">atom</span></tt></li>
+<li><strong>vibrons</strong> &#8211; a list of <tt class="xref py py-class docutils literal"><span class="pre">vibron</span></tt></li>
+<li><strong>lasers</strong> &#8211; a list of <tt class="xref py py-class docutils literal"><span class="pre">laser</span></tt></li>
+<li><strong>_rabi</strong> &#8211; a list containing the rabi-frequency with the following dimensions: list[N_lasers][N_atoms][N_transitions_per_atom]. since the amount of transitions can be different for each atom, the last dimension will depend on the atom and is not the same for all atoms.</li>
+<li><strong>_eta</strong> &#8211; a list containing the lamb-dicke parameter with the following dimensions: list[N_atoms][N_vibrons]</li>
+<li><strong>**kwargs</strong> &#8211; <p>key word arguments for additional optional parameters like cutoff. If no cutoff is given, it will be set to <cite>default_cutoff</cite>.</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the hamiltonian for the integration</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.integration_routine.create_phi">
+<tt class="descclassname">src.integration_routine.</tt><tt class="descname">create_phi</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/integration_routine.html#create_phi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.integration_routine.create_phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates the initial global state phi by adding (tensor) the atom and vibron states</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a <cite>qutip.Qobj</cite> that contains the density matrix of the global state</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.integration_routine.create_obs">
+<tt class="descclassname">src.integration_routine.</tt><tt class="descname">create_obs</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/integration_routine.html#create_obs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.integration_routine.create_obs" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates the default observables. they just measure the population in each state of the atoms and vibrons.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all observables for the populations of each atom and vibron state</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.integration_routine.create_labels">
+<tt class="descclassname">src.integration_routine.</tt><tt class="descname">create_labels</tt><big>(</big><em>cf</em><big>)</big><a class="reference internal" href="_modules/src/integration_routine.html#create_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.integration_routine.create_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>helper function for <a class="reference internal" href="#src.integration_routine.plot" title="src.integration_routine.plot"><tt class="xref py py-func docutils literal"><span class="pre">plot()</span></tt></a></p>
+<p>just specifies the color and linestyle of the plots and extracts the propper names from the cf</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cf</strong> &#8211; canonical form of the integration problem</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the label as well as color list for plotting</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.integration_routine.plot">
+<tt class="descclassname">src.integration_routine.</tt><tt class="descname">plot</tt><big>(</big><em>times</em>, <em>exp</em>, <em>cf='none'</em><big>)</big><a class="reference internal" href="_modules/src/integration_routine.html#plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.integration_routine.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.integration_routine.integrate_cf">
+<tt class="descclassname">src.integration_routine.</tt><tt class="descname">integrate_cf</tt><big>(</big><em>cf</em><big>)</big><a class="reference internal" href="_modules/src/integration_routine.html#integrate_cf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.integration_routine.integrate_cf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.integration_routine.create_hamiltonian_eff">
+<tt class="descclassname">src.integration_routine.</tt><tt class="descname">create_hamiltonian_eff</tt><big>(</big><em>atoms</em>, <em>vibrons</em>, <em>lasers</em>, <em>_rabi</em>, <em>_eta</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/src/integration_routine.html#create_hamiltonian_eff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.integration_routine.create_hamiltonian_eff" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>atoms</strong> &#8211; a list of <tt class="xref py py-class docutils literal"><span class="pre">atom</span></tt></li>
+<li><strong>vibrons</strong> &#8211; a list of <tt class="xref py py-class docutils literal"><span class="pre">vibron</span></tt></li>
+<li><strong>lasers</strong> &#8211; a list of <tt class="xref py py-class docutils literal"><span class="pre">laser</span></tt></li>
+<li><strong>_rabi</strong> &#8211; a list containing the rabi-frequency with the following dimensions: list[N_lasers][N_atoms][N_transitions_per_atom]. since the amount of transitions can be different for each atom, the last dimension will depend on the atom and is not the same for all atoms.</li>
+<li><strong>_eta</strong> &#8211; a list containing the lamb-dicke parameter with the following dimensions: list[N_atoms][N_vibrons]</li>
+<li><strong>**kwargs</strong> &#8211; <p>key word arguments for additional optional parameters like cutoff. If no cutoff is given, it will be set to <cite>default_cutoff</cite>.</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the hamiltonian for the integration</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.integration_routine.integrate_cf_eff">
+<tt class="descclassname">src.integration_routine.</tt><tt class="descname">integrate_cf_eff</tt><big>(</big><em>cf</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/src/integration_routine.html#integrate_cf_eff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.integration_routine.integrate_cf_eff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.laser_class">
+<span id="src-laser-class-module"></span><h2>src.laser_class module<a class="headerlink" href="#module-src.laser_class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.laser_class.laser">
+<em class="property">class </em><tt class="descclassname">src.laser_class.</tt><tt class="descname">laser</tt><big>(</big><em>pattern</em>, <em>freq</em>, <em>phase=0</em><big>)</big><a class="reference internal" href="_modules/src/laser_class.html#laser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.laser_class.laser" title="Permalink to this definition">¶</a></dt>
+<dd><p>this class stores information for a laser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pattern</strong> &#8211; the firing pattern of the laser i.e. intervalls when the laser in on.</li>
+<li><strong>freq</strong> &#8211; the frequency of the laser</li>
+<li><strong>phase</strong> &#8211; optional. the phase of the laser. is 0 if no value is given.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="src.laser_class.laser.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>pattern</em>, <em>freq</em>, <em>phase=0</em><big>)</big><a class="reference internal" href="_modules/src/laser_class.html#laser.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.laser_class.laser.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>constructor of the laser</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pattern</strong> &#8211; the firing pattern of the laser. needs to have the form [[0, 1], [2, 3], ...].</li>
+<li><strong>freq</strong> &#8211; the frequency of the laser</li>
+<li><strong>phase</strong> &#8211; the phase of the laser</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.matrix_plot">
+<span id="src-matrix-plot-module"></span><h2>src.matrix_plot module<a class="headerlink" href="#module-src.matrix_plot" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.matrix_plot.l_bra">
+<tt class="descclassname">src.matrix_plot.</tt><tt class="descname">l_bra</tt><big>(</big><em>s</em><big>)</big><a class="reference internal" href="_modules/src/matrix_plot.html#l_bra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.matrix_plot.l_bra" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.matrix_plot.l_ket">
+<tt class="descclassname">src.matrix_plot.</tt><tt class="descname">l_ket</tt><big>(</big><em>s</em><big>)</big><a class="reference internal" href="_modules/src/matrix_plot.html#l_ket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.matrix_plot.l_ket" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.matrix_plot.qubit_hist">
+<tt class="descclassname">src.matrix_plot.</tt><tt class="descname">qubit_hist</tt><big>(</big><em>Q</em>, <em>xlabels='auto'</em>, <em>ylabels='auto'</em>, <em>title=''</em>, <em>save_name='none'</em><big>)</big><a class="reference internal" href="_modules/src/matrix_plot.html#qubit_hist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.matrix_plot.qubit_hist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.qt_import">
+<span id="src-qt-import-module"></span><h2>src.qt_import module<a class="headerlink" href="#module-src.qt_import" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.src_import">
+<span id="src-src-import-module"></span><h2>src.src_import module<a class="headerlink" href="#module-src.src_import" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.vibron_class">
+<span id="src-vibron-class-module"></span><h2>src.vibron_class module<a class="headerlink" href="#module-src.vibron_class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.vibron_class.vibron_holder">
+<em class="property">class </em><tt class="descclassname">src.vibron_class.</tt><tt class="descname">vibron_holder</tt><a class="reference internal" href="_modules/src/vibron_class.html#vibron_holder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.vibron_class.vibron_holder" title="Permalink to this definition">¶</a></dt>
+<dd><p>global class that keeps track of all created vibrons.
+a global instance is created in this file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vibron_list</strong> &#8211; contains all vibrons. the vibrons add themselves automatic to <cite>vibrons_holder_</cite> when constructed.</li>
+<li><strong>current_dims</strong> &#8211; contains the the dimensions of the vibrons.</li>
+<li><strong>N</strong> &#8211; contains the total dimensions of the vibron space (i.e. multiply all entries of <tt class="xref py py-attr docutils literal"><span class="pre">current_dims</span></tt>).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="src.vibron_class.vibron_holder.__init__">
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/vibron_class.html#vibron_holder.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.vibron_class.vibron_holder.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>the constructor just calls <a class="reference internal" href="#src.vibron_class.vibron_holder.clear" title="src.vibron_class.vibron_holder.clear"><tt class="xref py py-meth docutils literal"><span class="pre">clear()</span></tt></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.vibron_class.vibron_holder.destroy_correction">
+<tt class="descname">destroy_correction</tt><big>(</big><em>vibron</em><big>)</big><a class="reference internal" href="_modules/src/vibron_class.html#vibron_holder.destroy_correction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.vibron_class.vibron_holder.destroy_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>the vibrons don&#8217;t know how many other atoms there are and cannot provide a correct annihilator that acts on the global state. this  function fixes this by applying the correct tensor-product with the identities of all other vibrons.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vibron</strong> &#8211; an vibron of type <a class="reference internal" href="#src.vibron_class.vibron" title="src.vibron_class.vibron"><tt class="xref py py-class docutils literal"><span class="pre">vibron</span></tt></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the corrected <tt class="xref py py-attr docutils literal"><span class="pre">vibron.destroy</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.vibron_class.vibron_holder.state">
+<tt class="descname">state</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/vibron_class.html#vibron_holder.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.vibron_class.vibron_holder.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>this function returns the global state of all vibrons. it takes all single states and tensors them together.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a <cite>qutip.Qobj</cite> containing the density matrix of the collective vibron state</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.vibron_class.vibron_holder.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/vibron_class.html#vibron_holder.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.vibron_class.vibron_holder.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>clears the internal list of atoms and dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="src.vibron_class.vibron_holder_">
+<tt class="descclassname">src.vibron_class.</tt><tt class="descname">vibron_holder_</tt><em class="property"> = &lt;src.vibron_class.vibron_holder instance at 0x2ab5cd6ad3b0&gt;</em><a class="headerlink" href="#src.vibron_class.vibron_holder_" title="Permalink to this definition">¶</a></dt>
+<dd><p>the only instance of atom_holder that should exist.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="src.vibron_class.vibron">
+<em class="property">class </em><tt class="descclassname">src.vibron_class.</tt><tt class="descname">vibron</tt><big>(</big><em>freq</em>, <em>N</em>, <em>state='none'</em><big>)</big><a class="reference internal" href="_modules/src/vibron_class.html#vibron"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.vibron_class.vibron" title="Permalink to this definition">¶</a></dt>
+<dd><p>this class stores information for a vibron.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>freq</strong> &#8211; the frequency of the vibrational mode</li>
+<li><strong>state</strong> &#8211; the density matrix of the initial internal state of the vibron</li>
+<li><strong>N</strong> &#8211; the dimension of the vibron-space</li>
+<li><strong>destroy</strong> &#8211; the annihilator operator of the vibron</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="src.vibron_class.vibron.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>freq</em>, <em>N</em>, <em>state='none'</em><big>)</big><a class="reference internal" href="_modules/src/vibron_class.html#vibron.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.vibron_class.vibron.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>the vibron-constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>freq</strong> &#8211; the frequency of the vibrational mode</li>
+<li><strong>N</strong> &#8211; the dimension of the vibron (if you work with thermal states always check that this is large enough)</li>
+<li><strong>state</strong> &#8211; optional parameter of the initial density matrix. needs to be convertable to <cite>qutip.Qobj</cite>. if no state is given, it will be set to the pure groundstate.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">src package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-src.atom_class">src.atom_class module</a></li>
+<li><a class="reference internal" href="#module-src.gui">src.gui module</a></li>
+<li><a class="reference internal" href="#module-src.integration_routine">src.integration_routine module</a></li>
+<li><a class="reference internal" href="#module-src.laser_class">src.laser_class module</a></li>
+<li><a class="reference internal" href="#module-src.matrix_plot">src.matrix_plot module</a></li>
+<li><a class="reference internal" href="#module-src.qt_import">src.qt_import module</a></li>
+<li><a class="reference internal" href="#module-src.src_import">src.src_import module</a></li>
+<li><a class="reference internal" href="#module-src.vibron_class">src.vibron_class module</a></li>
+<li><a class="reference internal" href="#module-src">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/src.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">Trapped Ion Sim  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Mario S. Koenz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
