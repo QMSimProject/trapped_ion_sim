@@ -1,0 +1,64 @@
+# I followed this tutorial: http://daler.github.io/sphinxdoc-test/includeme.html
+
+# set up gh_pages with sphinx
+mkdir sphinx
+cd sphinx
+# set up sphinx in this folder (see how_to_sphinx.txt)
+
+cd ..
+mkdir docs
+cd docs
+
+# clone the repo (that is in ../) but call it html
+git clone http....repo html 
+
+cd html
+
+# make a new branch called gh-pages
+git branch gh-pages
+
+git symbolic-ref HEAD refs/heads/gh-pages
+rm .git/index
+git clean -fdx
+
+# now html is empty (you killed everything in this repo)
+
+# check it the branch is gh-pages
+git branch
+
+# modify sphinx Makefile
+cd ../sphinx
+# open Makefile and change BUILDDIR to
+BUILDDIR      = ../docs
+
+# now build the html
+make html
+
+# commit Makefile changes
+cd ..
+# check the branch, it should be master
+git branch
+git commit -a -m "modified Makefile"
+git push origin master
+
+# and now commit the html
+cd docs/html
+git branch # should give gh-pages
+git add .
+git commit -a -m "rebuilt doc"
+git push origin gh-pages
+
+# done
+
+# workflow
+# update your dir normally and commit to master
+# whenever needed rebuild doc and commit
+
+# in sphinx
+make html
+
+# in docs/html
+git add .
+git commit -a -m "rebuilt doc"
+git push origin gh-pages
+
