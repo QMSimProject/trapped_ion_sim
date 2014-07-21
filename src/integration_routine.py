@@ -164,6 +164,131 @@ def create_obs():
             obs.append(obs_in)
     
     return obs
+
+
+class res_collector:
+    def __init__(self):
+        self.init([], 1)
+    def init(self, fct, n_tsteps):
+        self.t_idx = 0
+        self.times = np.zeros(n_tsteps)
+        self.expect = []
+        self.fct = fct
+        for n in range(len(self.fct)):
+            self.expect.append(np.zeros(n_tsteps))
+    def measure(self, t, state):
+        i = self.t_idx
+        self.times[i] = t
+        for f, i_f in zipi(self.fct):
+            self.expect[i_f][i] = f(t, state)
+        
+        self.t_idx += 1
+
+res = res_collector()
+
+def callback_fct(t, state):
+    global res
+    res.measure(t, q.Qobj(state))
+
+import copy
+
+def create_obs2(cf):
+    
+    flatten = lambda l: [y for x in l for y in x]
+    
+    pi = flatten(cf["plot"])
+    #------------------- collect all names ------------------- 
+    a_nm = [a[0] for a in cf["atom"]]
+    v_nm = [a[0] for a in cf["vibron"]]
+    l_nm = [a[0] for a in cf["laser"]]
+    
+    all_nm = a_nm + v_nm + l_nm
+    
+    #~ import pyparsing as pp
+    #~ exp_stack = []
+    #~ 
+    #~ def push(strg, loc, toks):
+        #~ print(toks)    
+    #~ def ping(strg, loc, toks):
+        #~ print("exp" + str(toks))
+    #~ def pong(strg, loc, toks):
+        #~ print("cmd" + str(toks))
+    #~ exp = pp.Word(pp.alphas)
+    #~ num = pp.Word(pp.nums)
+    #~ char = pp.Word(pp.alphas, max = 1)
+    #~ var = char + pp.ZeroOrMore((num | char))
+    #~ 
+    #~ lpar = pp.Literal("(").suppress()
+    #~ rpar = pp.Literal(")").suppress()
+    #~ sep = pp.Literal(",").suppress()
+    #~ 
+    #~ exp = pp.Word(pp.alphanums + "_").setParseAction(ping)
+    #~ cmd = pp.Forward()
+    #~ cmd << (exp + (lpar + (cmd | exp) + pp.ZeroOrMore(sep + (cmd | exp)) + rpar)).setParseAction(pong)
+    #~ 
+    #~ print((cmd | exp).parseString("f(a(1, 2, 3))"))
+    
+    for a, i_a in zipi(a_nm):
+        exec("def " + a + "(op):\n    \n    return ['a', " + str(i_a) + ", op]") in locals()
+    
+    for v, i_v in zipi(v_nm):
+        exec("def " + v + "(op):\n    \n    return ['v', " + str(i_v) + ", op]") in locals()
+    
+    def support_test(t, li):
+        for l in li:
+            if t < l[1] and t >= l[0]:
+                return .5
+        return 0
+    
+    for l, i_l in zipi(l_nm):
+        exec("def " + l + "(t):\n    return support_test(t, " + str(cf["laser"][i_l][3]) + ")") in locals()
+    
+    def tensor(*ops):
+        #------------------- atom part ------------------- 
+        a_list = []
+        for d, i_d in zipi(atom_holder_.current_dims):
+            a_list.append(q.qeye(d))
+        for op in ops:
+            if op[0] == 'a':
+                a_list[op[1]] = op[2]
+        
+        #------------------- vibron part ------------------- 
+        v_list = []
+        for d, i_d in zipi(vibron_holder_.current_dims):
+            v_list.append(q.qeye(d))
+        for op in ops:
+            if op[0] == 'v':
+                v_list[op[1]] = op[2]
+        
+        return q.tensor(a_list + v_list)
+    
+    from qutip import fock_dm
+    from qutip import fidelity
+    from qutip import expect
+    
+    callback = True
+    fct = []
+    op_map = []
+    laser_fct = []
+    
+    for p in pi:
+        if p in l_nm:
+            laser_fct.append(eval(p))
+        elif p.find("state") != -1:
+            callback = True
+            exec("gg = lambda t, state: " + p + "\nfct.append(gg)") in locals()
+        else:
+            op = tensor(eval(p))
+            print(op)
+            op_map.append(op)
+            fct.append(lambda t, state: expect(op, state))
+            #~ copy.deepcopy(gg))
+    
+    if not callback:
+        return op_map, laser_fct, callback
+    else:
+        res.init(fct, cf["measure"])
+        return callback_fct, laser_fct, callback
     
 def create_labels(cf):
     """
@@ -398,14 +523,14 @@ def create_hamiltonian_eff(atoms, vibrons, lasers, _rabi, _eta, **kwargs):
     return H, col_args
 
 def integrate_cf_eff(cf, **kwargs):
+    global res
     GREEN("start integration")
     start_time = time.time()
     
+    #------------------- reset holders ------------------- 
+    atom_holder_.clear()
+    vibron_holder_.clear()
     #------------------- checking kwargs ------------------- 
-    #the two possibilities are "event" and "subspace"
-    if not "opt" in kwargs:
-        kwargs["opt"] = "event"
-    
     at = []
     for a in cf["atom"]:
         at.append(atom(a[1], a[2]))
@@ -423,8 +548,8 @@ def integrate_cf_eff(cf, **kwargs):
             events.add(intervall[1])
     events = sorted(list(events))
         
-    rabi = cf["rabi"]
-    eta = cf["eta"]
+    rabi = cf["rabi"] #matrix
+    eta = cf["eta"] #matrix
     
     H, args = create_hamiltonian_eff(at, vb, ls, rabi, eta, cutoff = cf["cutoff"])
     
@@ -440,62 +565,9 @@ def integrate_cf_eff(cf, **kwargs):
                     act.remove(i_h)
         col_event.append([e, list(act)])
     
-    #------------------- reduce H-space as much as possible for each event ------------------- 
-    all_dims = H[0][0].shape[0]
-    
-    for i_e in range(len(col_event)):
-        e = col_event[i_e][0]
-        i_h_list = col_event[i_e][1]
-        #in the beginning it is assumed that each hamiltonian only affects one subsystem
-        sys = [set([i]) for i in range(len(H[0][0].dims[0]))]
-        affecetd_sys = []
-        for i_h in i_h_list:
-            affecetd_sys.append(set(H[i_h][3]))
-        
-        #now the list of sets sys gets corrected, bc hamiltonians can affect more than one subsystem (RSB/BSB)
-        for d in affecetd_sys:
-            found = False
-            for s in sys:
-                if d <= s:
-                    found = True
-                    break
-            if not found:
-                temp = set()
-                for el in d:
-                    for s in sys:
-                        if el in s:
-                            temp = temp | s
-                            sys.remove(s)
-                            break
-                sys.append(temp)
-        
-        #and the sets in sys that don't have a hamiltonian get eliminated
-        used = set([])
-        for d in affecetd_sys:
-            used = used | d
-        
-        for s in reversed(sys):
-            if not s <= used:
-                sys.remove(s)
-        #convert back to list
-        for i_s in range(len(sys)):
-            sys[i_s] = list(sys[i_s])
-        
-        split_act = [[] for i in range(len(sys))]
-        
-        for i_h in i_h_list:
-            for i_s in range(len(sys)):
-                if set(H[i_h][3]) <= set(sys[i_s]):
-                    split_act[i_s].append(i_h)
-                    break
-        #now the i_h_list is split into independent subspaces (e.g. integrating N/2 dim twice is way faster than N once)
-        col_event[i_e][1] = zip(sys, split_act)
-    
     #col_event is a list with the following content:
     #col_event[N][0]: event time
-    #col_event[N][1]: a list of which subsystems are affected by which hamiltonians
-    #col_event[N][1][M][0]: the affected subsystems
-    #col_event[N][1][M][1]: the acting hamiltonians (the index, the hamiltonian is H[index])
+    #col_event[N][1]: systems active (bc of laser pulses)
     
     #------------------- assign tlist parts to col_res ------------------- 
     tlist = np.linspace(cf["lower"], cf["upper"], cf["measure"])
@@ -526,92 +598,46 @@ def integrate_cf_eff(cf, **kwargs):
     
     phi = create_phi()
     obs = create_obs()
+    laser_ops = []
+    callback = False
+    #~ obs, laser_ops, callback = create_obs2(cf)
     
-    if "obs" in cf.keys():
-        for ob in cf["obs"]:
-            fct_name = ob.split("(")[0]
-            fct_name = fct_name.split("def ")[1]
-            
-            exec(ob) in globals()
-            
-            #~ print(eval(fct_name)(q.tensor(q.qeye(2), q.qeye(2), q.fock_dm(5, 0)).unit()))
-            
+    #~ callback_fct(1, q.tensor(q.qeye(2), q.qeye(2), q.fock_dm(5, 2)))
+    
     opts = q.Odeoptions()
-    opts.rec = 1
-    #------------------- collect result helper ------------------- 
-    #a list with the subsystem dimensions
-    full_dims = H[0][0].dims[0]
-    #the starting position in obs for each system
-    full_start = list(np.add.accumulate(full_dims))[:-1]
-    full_start.insert(0, 0)
-    #just a set with all subsystems
-    full_space = set(range(len(full_dims)))
-    #multiplies dimensions of subsystems that are not in sub (needed bc of ptrace) / if full_space == sub the return 1
-    dim_corr = lambda sub: np.multiply.accumulate([[full_dims[i] for i in (full_space - set(sub))], [1]][full_space == set(sub)])[-1]
-    
-    collect_times = lambda *args: [a for res in args for a in res.times]
-    collect_expect = lambda *args: [[a for res in args for a in res.expect[j]] for j in range(len(args[0].expect))]
-    
-    #since phi is updated on a subspace, one has to update the global state before processing the next event
-    def fix_phi(sub_space, new_state, old_state):
-        old = [old_state.ptrace(s) for s in full_space]
-        new = [new_state.ptrace(s) for s in range(len(sub_space))]
-        for i in range(len(sub_space)):
-            old[sub_space[i]] = new[i]
-        return q.tensor(old)
+    opts.store_final_state = True
     
     #------------------- integration routine ------------------- 
-    col_res = []
+    col_res = [] #collected results
     
+    #=================== event integration ===================
     for e in col_event:
         tlist_event = np.linspace(e[0][0], e[0][1], e[0][2])
         
-        if kwargs["opt"] == "subspace":
-            #~ #=================== improved subspace integration ===================
-            obs_val = [[q.expect(o, phi)]*e[0][2] for o in obs]
-            if len(e[1]) == 0:
-                res = q.mesolve([], phi, tlist_event, [], [], options = opts, args = args)
-                phi = res.states[-1]
-            else:
-                for sub in e[1]:
-                    sub_space = sub[0]
-                    h_idx = sub[1]
-                    H_event = []
-                    for i_h in h_idx:
-                        H_event.append([H[i_h][0].ptrace(sub_space) / dim_corr(sub_space), H[i_h][2]])
-                    
-                    obs_event = []
-                    for sub_sys in sub_space:
-                        for j in range(full_dims[sub_sys]):
-                            obs_event.append(obs[full_start[sub_sys] + j].ptrace(sub_space) / dim_corr(sub_space))
-                    phi_event = phi.ptrace(sub_space)
-                    res = q.mesolve(H_event, phi_event, tlist_event, [], obs_event, options = opts, args = args)
-                    
-                    n = 0
-                    for sub_sys in sub_space:
-                        for j in range(full_dims[sub_sys]):
-                            obs_val[full_start[sub_sys] + j] = res.expect[n]
-                            n += 1
-                    
-                    phi = fix_phi(sub_space, res.states[-1], phi)
-            
-            res.expect = obs_val
-        elif kwargs["opt"] == "event":
-            #=================== event integration ===================
-            h_idx = [y for x in e[1] for y in x[1]]
-            H_event = []
-            for i_h in h_idx:
-                H_event.append([H[i_h][0], H[i_h][2]])
-            res = q.mesolve(H_event, phi, tlist_event, [], obs, options = opts, args = args)
-            phi = res.states[-1]
+        h_idx = e[1]
+        H_event = []
+        for i_h in h_idx:
+            H_event.append([H[i_h][0], H[i_h][2]])
+        if callback:
+            q.mesolve(H_event, phi, tlist_event, [], obs, options = opts, args = args)
         else:
-            print("wrong kwarg for opt given")
-        col_res.append(res)
+            res = q.mesolve(H_event, phi, tlist_event, [], obs, options = opts, args = args)
+            phi = res.final_state
+            col_res.append(res)
     
     end_time = time.time()
     GREEN("integration done in {}".format(datetime.timedelta(seconds = int(end_time - start_time))))
     
-    plot(collect_times(*col_res), collect_expect(*col_res), cf)
+    #------------------- collect result helper ------------------- 
+    collect_times = lambda *args: [a for res in args for a in res.times]
+    collect_expect = lambda *args: [[a for res in args for a in res.expect[j]] for j in range(len(args[0].expect))]
     
-    atom_holder_.clear()
-    vibron_holder_.clear()
+    if not callback:
+        res.times, res.expect = collect_times(*col_res), collect_expect(*col_res)
+    
+    for l in laser_ops:
+        l_res = np.zeros(cf["measure"])
+        for t, i_t in zipi(tlist):
+            l_res[i_t] = l(t)
+        res.expect.append(l_res)
+    return res.times, res.expect

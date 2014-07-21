@@ -43,6 +43,10 @@ git push origin master
 
 # and now commit the html
 cd docs/html
+
+# add .nojekyll file
+touch .nojekyll
+
 git branch # should give gh-pages
 git add .
 git commit -a -m "rebuilt doc"

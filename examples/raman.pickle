@@ -1,0 +1,61 @@
+(dp0
+S'cutoff'
+p1
+V10
+p2
+sS'laser'
+p3
+(lp4
+(lp5
+Vlaser1
+p6
+aV1000+1
+p7
+aV0
+p8
+aV[[0, 100*sqrt(2)*pi]]
+p9
+aa(lp10
+Vlaser2
+p11
+aV900+1
+p12
+aV0
+p13
+aV[[0, 100*sqrt(2)*pi]]
+p14
+aasS'interval'
+p15
+V[0, 100*pi]
+p16
+sS'measure'
+p17
+V1000
+p18
+sS'vibron'
+p19
+(lp20
+sS'eta'
+p21
+(lp22
+(lp23
+asS'atom'
+p24
+(lp25
+(lp26
+Vatom1
+p27
+aV[0, 100, 1000]
+p28
+aVdiag([1, 0, 0])
+p29
+aasS'rabi'
+p30
+(lp31
+(lp32
+V.1*sqrt(2)
+p33
+aa(lp34
+V.1*sqrt(2)
+p35
+aas.

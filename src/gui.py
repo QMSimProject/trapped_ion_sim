@@ -6,7 +6,7 @@
 # File:    gui.py
 
 from qt_import import *
-from .integration_routine import integrate_cf, integrate_cf_eff
+from .integration_routine import integrate_cf, integrate_cf_eff, plot
 
 import numpy as np
 import pickle
@@ -529,12 +529,10 @@ class Q2DisplayWidget(QMainWindow):
     def load(self):
         print("load")
         fileName = QFileDialog.getOpenFileName(self, "Open File", "~/", "Pickle Files (*.pickle)")
-        print(fileName)
         file_name = fileName[0]
         if file_name == "":
             return
         
-        print(file_name)
         f = open(file_name, 'rb')
         data = pickle.load(f)
         f.close()
@@ -546,7 +544,8 @@ class Q2DisplayWidget(QMainWindow):
         
         canonical_form = self.parse()
         
-        integrate_cf_eff(canonical_form, opt = "event")
+        times, exp = integrate_cf_eff(canonical_form, method = "mesolve")
+        plot(times, exp, canonical_form)
     
 def run_gui():
     app = QApplication(sys.argv)
