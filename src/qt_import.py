@@ -11,14 +11,18 @@ from .addon import *
 # (they are almost always interchangeable)
 # both are python binding to the c++ QT library
 # I slightly prefer pyside but PyQt4 is on the same level today
+qt_binding = "none"
+
 try:
+    GREEN("PySide loaded")
     from PySide.QtCore import *
     from PySide.QtGui import *
-    GREEN("PySide loaded")
+    qt_binding = "PySide"
 except ImportError:
     try:
         from PyQt4.QtCore import *
         from PyQt4.QtGui import *
+        qt_binding = "PyQt4"
         GREEN("PyQt4 loaded")
     except ImportError:
         ERROR("no PySide or PyQt4 module found")

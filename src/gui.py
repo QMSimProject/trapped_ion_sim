@@ -347,7 +347,7 @@ class Q2DisplayWidget(QMainWindow):
         #=================== parse lasers ===================
         cf["laser"] = []
         for l in self.laser_w:
-            name = l.name.text()
+            name = str(l.name.text())
             freq = eval(l.freq.text())
             phase = eval(l.phase.text())
             pattern = eval(l.pattern.text())
@@ -359,7 +359,7 @@ class Q2DisplayWidget(QMainWindow):
         #=================== parse atoms ===================
         cf["atom"] = []
         for a in self.atom_w:
-            name = a.name.text()
+            name = str(a.name.text())
             levels = eval(a.levels.text())
             state = eval(a.state.text())
             assert len(state) == len(levels), 'dimension mismatch in ' + name
@@ -370,7 +370,7 @@ class Q2DisplayWidget(QMainWindow):
         #=================== parse vibrons ===================
         cf["vibron"] = []
         for v in self.vibron_w:
-            name = v.name.text()
+            name = str(v.name.text())
             freq = eval(v.freq.text())
             state = eval(v.state.text())
             cf["vibron"].append([name
@@ -417,10 +417,10 @@ class Q2DisplayWidget(QMainWindow):
         #=================== parse lasers ===================
         cf["laser"] = []
         for l in self.laser_w:
-            name = l.name.text()
-            freq = l.freq.text()
-            phase = l.phase.text()
-            pattern = l.pattern.text()
+            name = str(l.name.text())
+            freq = str(l.freq.text())
+            phase = str(l.phase.text())
+            pattern = str(l.pattern.text())
             cf["laser"].append([name
                               , freq
                               , phase
@@ -429,9 +429,9 @@ class Q2DisplayWidget(QMainWindow):
         #=================== parse atoms ===================
         cf["atom"] = []
         for a in self.atom_w:
-            name = a.name.text()
-            levels = a.levels.text()
-            state = a.state.text()
+            name = str(a.name.text())
+            levels = str(a.levels.text())
+            state = str(a.state.text())
             cf["atom"].append([name
                              , levels
                              , state
@@ -439,9 +439,9 @@ class Q2DisplayWidget(QMainWindow):
         #=================== parse vibrons ===================
         cf["vibron"] = []
         for v in self.vibron_w:
-            name = v.name.text()
-            freq = v.freq.text()
-            state = v.state.text()
+            name = str(v.name.text())
+            freq = str(v.freq.text())
+            state = str(v.state.text())
             cf["vibron"].append([name
                                , freq
                                , state
@@ -452,7 +452,7 @@ class Q2DisplayWidget(QMainWindow):
         for r_row in self.rabi_w:
             temp = []
             for r in r_row:
-                rabi = r.text()
+                rabi = str(r.text())
                 temp.append(rabi)
             
             cf["rabi"].append(temp)
@@ -463,13 +463,13 @@ class Q2DisplayWidget(QMainWindow):
             cf["eta"].append([])
         for e_row in self.eta_w:
             for e, e_i in zip(e_row, range(len(e_row))):
-                eta = e.text()
+                eta = str(e.text())
                 cf["eta"][e_i].append(eta)
         
         #=================== parse integration ===================
-        cf["interval"] = self.itg_w.interval.text()
-        cf["measure"] = self.itg_w.measure.text()
-        cf["cutoff"] = self.itg_w.cutoff.text()
+        cf["interval"] = str(self.itg_w.interval.text())
+        cf["measure"] = str(self.itg_w.measure.text())
+        cf["cutoff"] = str(self.itg_w.cutoff.text())
         
         return cf
         
@@ -513,11 +513,16 @@ class Q2DisplayWidget(QMainWindow):
     def save(self):
         print("save")
         fileName = QFileDialog.getSaveFileName(self, "Open File", "~/", "Pickle Files (*.pickle)")
-        file_name = fileName[0]
+        if qt_binding == "PySide":
+            file_name = str(fileName[0])
+        else:
+            file_name = str(fileName)
+        
         if file_name == "":
             return
-        if fileName[0].find(fileName[1].split("*")[-1][:-1]) == -1:
-            file_name += fileName[1].split("*")[-1][:-1]
+            
+        if file_name.find(".pickle") == -1:
+            file_name += ".pickle"
         
         data = self.save_parse()
         f = open(file_name, 'wb')
@@ -529,10 +534,14 @@ class Q2DisplayWidget(QMainWindow):
     def load(self):
         print("load")
         fileName = QFileDialog.getOpenFileName(self, "Open File", "~/", "Pickle Files (*.pickle)")
-        file_name = fileName[0]
+        if qt_binding == "PySide":
+            file_name = str(fileName[0])
+        else:
+            file_name = str(fileName)
+            
         if file_name == "":
             return
-        
+            
         f = open(file_name, 'rb')
         data = pickle.load(f)
         f.close()
