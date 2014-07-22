@@ -8,8 +8,8 @@
 from qt_import import *
 from .integration_routine import integrate_cf, integrate_cf_eff, plot
 
-import numpy as np
-import pickle
+from src_import import *
+
 
 class Q2LaserWidget(QWidget):
     __laser_counter = 0
@@ -348,9 +348,9 @@ class Q2DisplayWidget(QMainWindow):
         cf["laser"] = []
         for l in self.laser_w:
             name = str(l.name.text())
-            freq = eval(l.freq.text())
-            phase = eval(l.phase.text())
-            pattern = eval(l.pattern.text())
+            freq = eval(str(l.freq.text()))
+            phase = eval(str(l.phase.text()))
+            pattern = eval(str(l.pattern.text()))
             cf["laser"].append([name
                               , freq
                               , phase
@@ -360,8 +360,8 @@ class Q2DisplayWidget(QMainWindow):
         cf["atom"] = []
         for a in self.atom_w:
             name = str(a.name.text())
-            levels = eval(a.levels.text())
-            state = eval(a.state.text())
+            levels = eval(str(a.levels.text()))
+            state = eval(str(a.state.text()))
             assert len(state) == len(levels), 'dimension mismatch in ' + name
             cf["atom"].append([name
                              , levels
@@ -371,8 +371,8 @@ class Q2DisplayWidget(QMainWindow):
         cf["vibron"] = []
         for v in self.vibron_w:
             name = str(v.name.text())
-            freq = eval(v.freq.text())
-            state = eval(v.state.text())
+            freq = eval(str(v.freq.text()))
+            state = eval(str(v.state.text()))
             cf["vibron"].append([name
                                , freq
                                , len(state)
@@ -384,7 +384,7 @@ class Q2DisplayWidget(QMainWindow):
         for r_row, r_row_i in zip(self.rabi_w, range(len(self.rabi_w))):
             temp = []
             for r, r_i in zip(r_row, range(len(r_row))):
-                rabi = eval(r.text())
+                rabi = eval(str(r.text()))
                 n_lvl = len(cf["atom"][r_i][1])
                 trans = n_lvl * (n_lvl - 1) / 2
                 if isinstance(rabi, list):
@@ -401,14 +401,14 @@ class Q2DisplayWidget(QMainWindow):
             cf["eta"].append([])
         for e_row, e_row_i in zip(self.eta_w, range(len(self.eta_w))):
             for e, e_i in zip(e_row, range(len(e_row))):
-                eta = eval(e.text())
+                eta = eval(str(e.text()))
                 cf["eta"][e_i].append(eta)
         
         #=================== parse integration ===================
-        cf["upper"] = eval(self.itg_w.interval.text())[1]
-        cf["lower"] = eval(self.itg_w.interval.text())[0]
-        cf["measure"] = eval(self.itg_w.measure.text())
-        cf["cutoff"] = eval(self.itg_w.cutoff.text())
+        cf["upper"] = eval(str(self.itg_w.interval.text()))[1]
+        cf["lower"] = eval(str(self.itg_w.interval.text()))[0]
+        cf["measure"] = eval(str(self.itg_w.measure.text()))
+        cf["cutoff"] = eval(str(self.itg_w.cutoff.text()))
         
         return cf
     
@@ -532,6 +532,7 @@ class Q2DisplayWidget(QMainWindow):
         self.setWindowTitle(file_name.split("/")[-1])
     
     def load(self):
+        print(pickle.compatible_formats)
         print("load")
         fileName = QFileDialog.getOpenFileName(self, "Open File", "~/", "Pickle Files (*.pickle)")
         if qt_binding == "PySide":
