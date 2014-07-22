@@ -14,10 +14,10 @@ from .addon import *
 qt_binding = "none"
 
 try:
-    GREEN("PySide loaded")
     from PySide.QtCore import *
-    from PySide.QtGui import *
+    from PySide.QtGui import ba
     qt_binding = "PySide"
+    GREEN("PySide loaded")
 except ImportError:
     try:
         from PyQt4.QtCore import *
