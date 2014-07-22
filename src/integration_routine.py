@@ -138,6 +138,8 @@ def create_phi():
     
     :returns: a `qutip.Qobj` that contains the density matrix of the global state
     """
+    if len(vibron_holder_.current_dims) == 0:
+        return atom_holder_.state()
     return q.tensor(atom_holder_.state(), vibron_holder_.state()).unit()
 
 def create_obs():

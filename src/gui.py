@@ -532,7 +532,6 @@ class Q2DisplayWidget(QMainWindow):
         self.setWindowTitle(file_name.split("/")[-1])
     
     def load(self):
-        print(pickle.compatible_formats)
         print("load")
         fileName = QFileDialog.getOpenFileName(self, "Open File", "~/", "Pickle Files (*.pickle)")
         if qt_binding == "PySide":
