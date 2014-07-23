@@ -15,7 +15,7 @@ qt_binding = "none"
 
 try:
     from PySide.QtCore import *
-    from PySide.QtGui import ba
+    from PySide.QtGui import *
     qt_binding = "PySide"
     GREEN("PySide loaded")
 except ImportError:

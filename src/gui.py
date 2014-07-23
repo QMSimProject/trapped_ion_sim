@@ -6,7 +6,7 @@
 # File:    gui.py
 
 from qt_import import *
-from .integration_routine import integrate_cf, integrate_cf_eff, plot
+from .integration_routine import integrate_cf, integrate_cf, plot
 
 from src_import import *
 
@@ -185,11 +185,19 @@ class Q2PlotWidget(QWidget):
         super(Q2PlotWidget, self).__init__(parent)
         grid = QGridLayout(self)
         
-        grid.addWidget(QTextEdit(self), 1, 1, 1, 1)
-        grid.addWidget(QLineEdit(self), 2, 1, 1, 1)
+        self.parent = parent
+        self.text = QTextEdit(self)
+        self.btn = QPushButton("autogenerate", self)
+        self.btn.pressed.connect(self.autogen)
         
+        grid.addWidget(self.text, 1, 1, 1, 1)
+        grid.addWidget(self.btn, 2, 1, 1, 1)
         self.setLayout(grid)
         self.show()
+    
+    def autogen(self):
+        text = self.parent.autogen()
+        self.text.setText(text)
     
 class Q2DisplayWidget(QMainWindow):
     def __init__(self, parent = None):
@@ -245,15 +253,15 @@ class Q2DisplayWidget(QMainWindow):
         self.toolbar.addAction(save_action)
         self.toolbar.addAction(itg_action)
         
+        #=================== layout ===================
         
+        self.plot = Q2PlotWidget(self)
         self.init_dynaminc_ui()
         
         self.statusBar()
         self.setWindowTitle("working title")
-        #=================== layout ===================
     def init_dynaminc_ui(self):
         self.setup = QWidget(self)
-        
         grid = QGridLayout()
         grid.addWidget(self.num_w     , 2, 1, 1, 1)
         
@@ -326,17 +334,32 @@ class Q2DisplayWidget(QMainWindow):
         self.setup.setLayout(grid)
         
         tab = QTabWidget(self)
-        scroll = self.setup
-        #~ scroll = QScrollArea(self)
-        #~ scroll.setWidget(self.setup)
-        tab.addTab(scroll, "Setup")
-        tab.addTab(Q2PlotWidget(self), "Plot")
+        tab.addTab(self.setup, "Setup")
+        tab.addTab(self.plot, "Plot")
         self.setCentralWidget(tab)
         self.resize(0, 0)
         self.show()
         
     def changed_sb(self, val):
         self.init_dynaminc_ui()
+    
+    def autogen(self):
+        res = []
+        cf = self.parse()
+        for a in cf["atom"]:
+            res.append([])
+            for lvl, i_lvl in zipi(a[1]):
+                name = a[0]
+                res[-1].append([name + "(fock_dm(N, " + str(i_lvl) + "))", name + " " + str(lvl)])
+        
+        for a in cf["vibron"]:
+            res.append([])
+            for i_lvl in range(len(a[3])):
+                name = a[0]
+                res[-1].append([name + "(fock_dm(N, " + str(i_lvl) + "))", name + " " + str(i_lvl)])
+        
+        res = "\n\n".join(["\n".join(["; ".join(x) for x in y]) for y in res])
+        return res
     
     def parse(self):
         pi = np.pi
@@ -410,6 +433,23 @@ class Q2DisplayWidget(QMainWindow):
         cf["measure"] = eval(str(self.itg_w.measure.text()))
         cf["cutoff"] = eval(str(self.itg_w.cutoff.text()))
         
+        #=================== parse plot ===================
+        pl = str(self.plot.text.toPlainText())
+        
+        pl = pl.split("\n")
+        
+        new = [[]]
+        for p in pl:
+            if p.find(";") == -1:
+                if len(new[-1]) > 0:
+                    new.append([])
+            else:
+                new[-1].append(p.split("; "))
+        
+        if new[-1] == []:
+            new.pop()
+        
+        cf["plot"] = new
         return cf
     
     def save_parse(self):
@@ -471,6 +511,9 @@ class Q2DisplayWidget(QMainWindow):
         cf["measure"] = str(self.itg_w.measure.text())
         cf["cutoff"] = str(self.itg_w.cutoff.text())
         
+        #=================== parse plot ===================
+        cf["plot"] = str(self.plot.text.toPlainText())
+        
         return cf
         
     def load_parse(self, cf):
@@ -509,6 +552,9 @@ class Q2DisplayWidget(QMainWindow):
         self.itg_w.interval.setText(cf["interval"])
         self.itg_w.measure.setText(cf["measure"])
         self.itg_w.cutoff.setText(cf["cutoff"])
+        
+        #=================== parse plot ===================
+        self.plot.text.setText(cf["plot"])
     
     def save(self):
         print("save")
@@ -553,7 +599,7 @@ class Q2DisplayWidget(QMainWindow):
         
         canonical_form = self.parse()
         
-        times, exp = integrate_cf_eff(canonical_form, method = "mesolve")
+        times, exp = integrate_cf(canonical_form, method = "mesolve")
         plot(times, exp, canonical_form)
     
 def run_gui():

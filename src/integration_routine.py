@@ -18,120 +18,6 @@ default_cutoff = 100000
 the default cutoff frequency used by :func:`create_hamiltonian`
 """
 
-#=================== classes ===================
-def syn(expr, pat, args):
-    """
-    a helper function of the :func:`create_hamiltonian`. fuses the physical equation part with the laser-pattern part to a new python function
-    
-    :param expr: the physical equation in string representation
-    :param args: the dictionary that holds the values to the physical expression
-    :param pat: the laser pattern, see :attr:`laser.pattern`
-    :returns: a python function that takes the time and returns the physical expression if t is in the active pattern and 0 else
-    """
-    from pylab import exp
-    from pylab import pi
-    
-    for k, v in args.iteritems():
-        exec(k + " = v") in locals()
-    
-    def fct(t, pat):
-        for p in pat:
-            if t > p[0] and t < p[1]:
-                return 1
-        return 0
-        
-    exec("g = lambda t, args: (" + expr + ") * fct(t, pat)") in locals()
-    return g
-
-def create_hamiltonian(atoms, vibrons, lasers, _rabi, _eta, **kwargs):
-    """
-    :param atoms: a list of :class:`atom`
-    :param vibrons: a list of :class:`vibron`
-    :param lasers: a list of :class:`laser`
-    :param _rabi: a list containing the rabi-frequency with the following dimensions: list[N_lasers][N_atoms][N_transitions_per_atom]. since the amount of transitions can be different for each atom, the last dimension will depend on the atom and is not the same for all atoms.
-    :param _eta: a list containing the lamb-dicke parameter with the following dimensions: list[N_atoms][N_vibrons]
-    :param **kwargs: key word arguments for additional optional parameters like cutoff. If no cutoff is given, it will be set to `default_cutoff`.
-    :returns: the hamiltonian for the integration
-    """
-    global vibron_holder_
-    
-    if "cutoff" not in kwargs:
-        kwargs["cutoff"] = default_cutoff
-    cutoff = kwargs["cutoff"]
-    
-    H = []
-    
-    rwa_takes = [0, 0]
-    
-    for l, i_l in zipi(lasers):
-        for a, i_a in zipi(atoms):
-            for t, i_t in zipi(a.trans):
-                args = {}
-                args["hb"] = 1
-                args["Ohm"] = _rabi[i_l][i_a][i_t]
-                args["w0"] = t[0]
-                args["wL"] = l.freq
-                args["fL"] = l.phase
-                
-                #------------------- set up the operators ------------------- 
-                d_internal = t[1]
-                ci = q.tensor(d_internal.dag(), q.qeye(vibron_holder_.N))
-                di = q.tensor(d_internal      , q.qeye(vibron_holder_.N))
-                
-                Hc= [ [ci, syn(" 0.5 * hb * Ohm * ( exp( 1j * ((w0 - wL) * t + fL)) )", l.pattern, args)]
-                    , [di, syn(" 0.5 * hb * Ohm * ( exp(-1j * ((w0 - wL) * t + fL)) )", l.pattern, args)]
-                    ]
-                #------------------- rotating wave approx ------------------- 
-                rwa_c = [ abs(args["w0"] - args["wL"])
-                        , abs(args["w0"] - args["wL"])
-                        ]
-
-                #------------------- add carrier terms ------------------- 
-                if args["Ohm"] == 0: #then the term will be zero anyway
-                    continue
-                    
-                rwa_takes[1] += len(rwa_c)
-                for h, diff in zip(Hc, rwa_c):
-                    if diff < cutoff:
-                        H.append(h)
-                        rwa_takes[0] += 1
-                    
-                for v, i_v in zipi(vibrons):
-                    #------------------- set up the constants ------------------- 
-                    args["eta"] = _eta[i_a][i_v]
-                    args["wz"] = v.freq
-                    d_osz = v.destroy
-                    
-                    #------------------- set up the operators ------------------- 
-                    cc = q.tensor(d_internal.dag(), d_osz.dag())
-                    cd = q.tensor(d_internal.dag(), d_osz)
-                    dc = q.tensor(d_internal      , d_osz.dag())
-                    dd = q.tensor(d_internal      , d_osz)
-                    
-                    Hs= [ [cc, syn(" 0.5 * hb * Ohm * ( exp( 1j * ((w0 - wL) * t + fL)) ) * 1j * eta * exp( 1j * wz * t)", l.pattern, args)]
-                        , [cd, syn(" 0.5 * hb * Ohm * ( exp( 1j * ((w0 - wL) * t + fL)) ) * 1j * eta * exp(-1j * wz * t)", l.pattern, args)]
-                        , [dc, syn("-0.5 * hb * Ohm * ( exp(-1j * ((w0 - wL) * t + fL)) ) * 1j * eta * exp( 1j * wz * t)", l.pattern, args)]
-                        , [dd, syn("-0.5 * hb * Ohm * ( exp(-1j * ((w0 - wL) * t + fL)) ) * 1j * eta * exp(-1j * wz * t)", l.pattern, args)]
-                        ]
-                    
-                    #------------------- rotating wave approx ------------------- 
-                    rwa_s = [ abs(args["w0"] - args["wL"] + args["wz"])
-                            , abs(args["w0"] - args["wL"] - args["wz"])
-                            , abs(args["w0"] - args["wL"] - args["wz"])
-                            , abs(args["w0"] - args["wL"] + args["wz"])
-                            ]
-                    #------------------- add sideband terms ------------------- 
-                    if args["eta"] == 0:
-                        continue
-                        
-                    rwa_takes[1] += len(rwa_s)
-                    for h, diff in zip(Hs, rwa_s):
-                        if diff < cutoff:
-                            H.append(h)
-                            rwa_takes[0] += 1
-    print("{1} of {2} terms survived the RWA (cutoff: {0})".format(cutoff, *rwa_takes))
-    return H
-
 def create_phi():
     """
     creates the initial global state phi by adding (tensor) the atom and vibron states
@@ -141,32 +27,6 @@ def create_phi():
     if len(vibron_holder_.current_dims) == 0:
         return atom_holder_.state()
     return q.tensor(atom_holder_.state(), vibron_holder_.state()).unit()
-
-def create_obs():
-    """
-    creates the default observables. they just measure the population in each state of the atoms and vibrons.
-    
-    :returns: all observables for the populations of each atom and vibron state
-    """
-    obs = []
-    
-    dims = atom_holder_.current_dims + vibron_holder_.current_dims
-    
-    for d, i_d in zipi(dims):
-        for l in range(d):
-            obs_in = q.fock_dm(d, l)
-                
-            for k in dims[:i_d]:
-                obs_in = q.tensor(q.qeye(k), obs_in)
-                
-                
-            for k in dims[i_d+1:]:
-                obs_in = q.tensor(obs_in, q.qeye(k))
-                
-            obs.append(obs_in)
-    
-    return obs
-
 
 class res_collector:
     def __init__(self):
@@ -192,99 +52,142 @@ def callback_fct(t, state):
     global res
     res.measure(t, q.Qobj(state))
 
-import copy
-
-def create_obs2(cf):
-    
+def create_obs(cf):
+    global res
     flatten = lambda l: [y for x in l for y in x]
     
+    def hold_args(names, expr):
+        for n in names:
+            pos = 0
+            pos = expr.find(n)
+            
+            def find_matching_bracket(expr, pos_open):
+                assert(expr[pos_open] == "(")
+                pos = pos_open + 1
+                
+                while True:
+                    next_open = expr.find("(", pos)
+                    next_close = expr.find(")", pos)
+                    
+                    if next_open == -1 or next_close < next_open:
+                        pos_closed = next_close
+                        break
+                    else:
+                        pos = next_close + 1
+                
+                return expr[:pos_open + 1], expr[pos_open + 1: pos_closed], expr[pos_closed:]
+            
+            while pos != -1:
+                ipos = pos + len(n)
+                f = find_matching_bracket(expr, ipos)
+                expr = f[0] + "'" + f[1] + "'" + f[2]
+                pos = expr.find(n, pos + 2)
+        
+        return expr
+
     pi = flatten(cf["plot"])
     #------------------- collect all names ------------------- 
     a_nm = [a[0] for a in cf["atom"]]
     v_nm = [a[0] for a in cf["vibron"]]
     l_nm = [a[0] for a in cf["laser"]]
     
+    pi = [hold_args(a_nm + v_nm, x[0]) for x in pi]
+    
     all_nm = a_nm + v_nm + l_nm
     
-    #~ import pyparsing as pp
-    #~ exp_stack = []
-    #~ 
-    #~ def push(strg, loc, toks):
-        #~ print(toks)    
-    #~ def ping(strg, loc, toks):
-        #~ print("exp" + str(toks))
-    #~ def pong(strg, loc, toks):
-        #~ print("cmd" + str(toks))
-    #~ exp = pp.Word(pp.alphas)
-    #~ num = pp.Word(pp.nums)
-    #~ char = pp.Word(pp.alphas, max = 1)
-    #~ var = char + pp.ZeroOrMore((num | char))
-    #~ 
-    #~ lpar = pp.Literal("(").suppress()
-    #~ rpar = pp.Literal(")").suppress()
-    #~ sep = pp.Literal(",").suppress()
-    #~ 
-    #~ exp = pp.Word(pp.alphanums + "_").setParseAction(ping)
-    #~ cmd = pp.Forward()
-    #~ cmd << (exp + (lpar + (cmd | exp) + pp.ZeroOrMore(sep + (cmd | exp)) + rpar)).setParseAction(pong)
-    #~ 
-    #~ print((cmd | exp).parseString("f(a(1, 2, 3))"))
+    
+    class tag_class():
+        all_sys = atom_holder_.atom_list + vibron_holder_.vibron_list
+        def __init__ (self, name, idx, offset = 0):
+            self.name = name
+            self.idx = idx
+            self.off = offset
+            self.N = self.__class__.all_sys[self.idx + self.off].N
+        def __int__(self):
+            return self.idx + self.off
+        def __call__(self, op):
+            from qutip import fock_dm
+            from qutip import coherent_dm
+            from qutip import thermal_dm
+            from qutip import squeeze
+            from qutip import destroy
+            from qutip import create
+            from qutip import sigmax
+            from qutip import sigmay
+            from qutip import sigmaz
+            N = self.N
+            return [self.idx + self.off, eval(op)]
     
     for a, i_a in zipi(a_nm):
-        exec("def " + a + "(op):\n    \n    return ['a', " + str(i_a) + ", op]") in locals()
+        exec(a + " =  tag_class('" + a + "', " + str(i_a) + ")") in locals()
     
     for v, i_v in zipi(v_nm):
-        exec("def " + v + "(op):\n    \n    return ['v', " + str(i_v) + ", op]") in locals()
+        exec(v + " =  tag_class('" + v + "', " + str(i_v) + ", " + str(len(a_nm)) + ")") in locals()
     
-    def support_test(t, li):
-        for l in li:
-            if t < l[1] and t >= l[0]:
-                return .5
-        return 0
+    class laser_helper():
+        def __init__(self, pattern):
+            self.pattern = pattern
+        def __call__(self, m):
+            self.magn = m
+            def closure(t):
+                for l in self.pattern:
+                    if t < l[1] and t >= l[0]:
+                        return self.magn
+                return 0
+            return closure
     
     for l, i_l in zipi(l_nm):
-        exec("def " + l + "(t):\n    return support_test(t, " + str(cf["laser"][i_l][3]) + ")") in locals()
+        exec(l + " = laser_helper(" + str(cf["laser"][i_l][3]) + ")") in locals()
+    
+    def fidelity(ref, s):
+        op = ref[1]
+        sys = [ref[0]]
+        
+        def closure(t, state):
+            return q.fidelity(op, state.ptrace(sys))
+        return closure
     
     def tensor(*ops):
         #------------------- atom part ------------------- 
-        a_list = []
-        for d, i_d in zipi(atom_holder_.current_dims):
-            a_list.append(q.qeye(d))
+        sys_list = []
+        for d, i_d in zipi(atom_holder_.current_dims + vibron_holder_.current_dims):
+            sys_list.append(q.qeye(d))
         for op in ops:
-            if op[0] == 'a':
-                a_list[op[1]] = op[2]
+            sys_list[op[0]] = op[1]
         
-        #------------------- vibron part ------------------- 
-        v_list = []
-        for d, i_d in zipi(vibron_holder_.current_dims):
-            v_list.append(q.qeye(d))
-        for op in ops:
-            if op[0] == 'v':
-                v_list[op[1]] = op[2]
-        
-        return q.tensor(a_list + v_list)
+        return q.tensor(sys_list)
     
-    from qutip import fock_dm
-    from qutip import fidelity
     from qutip import expect
     
-    callback = True
+    callback = False
     fct = []
     op_map = []
     laser_fct = []
     
-    for p in pi:
-        if p in l_nm:
-            laser_fct.append(eval(p))
-        elif p.find("state") != -1:
+    for p, i_p in zipi(pi):
+        is_laser = False
+        for l in l_nm:
+            if p.find(l) != -1:
+                is_laser = True
+                break
+        
+        if is_laser:
+            exec("f = " + p) in locals()
+            laser_fct.append([f, i_p])
+        elif p.find("fidelity") != -1:
             callback = True
-            exec("gg = lambda t, state: " + p + "\nfct.append(gg)") in locals()
+            state = 1
+            exec("f = " + p) in locals()
+            fct.append(f)
         else:
             op = tensor(eval(p))
-            print(op)
             op_map.append(op)
-            fct.append(lambda t, state: expect(op, state))
-            #~ copy.deepcopy(gg))
+            def closure(i):
+                def f(t, state):
+                    return expect(op_map[i], state)
+                return f
+            
+            fct.append(closure(len(op_map) - 1))
     
     if not callback:
         return op_map, laser_fct, callback
@@ -301,28 +204,17 @@ def create_labels(cf):
     :param cf: canonical form of the integration problem
     :returns: the label as well as color list for plotting
     """
+    flatten = lambda l: [y for x in l for y in x]
+    
     lbl = []
     col = []
     
     color = ["b-", "g-", "c-", "m-", "r-", "y-", "b:", "g:", "c:", "m:", "r:", "y:"]
+    for subplot in cf["plot"]:
+        lbl += [x[1] for x in subplot]
+        col += color[:len(subplot)]
     
-    n_atoms = len(atom_holder_.current_dims)
-    
-    for a, i_a in zipi(atom_holder_.current_dims):
-        for lvl in range(a):
-            if cf == "none":
-                lbl.append("atom " + str(i_a) + " s" +  str(lvl))
-            else:
-                lbl.append(cf["atom"][i_a][0] + " s" +  str(lvl))
-            col.append(color[lvl])
-    
-    for v, i_v in zipi(vibron_holder_.current_dims):
-        for lvl in range(v):
-            if cf == "none":
-                lbl.append("vib " + str(i_v) + " s" +  str(lvl))
-            else:
-                lbl.append(cf["vibron"][i_v][0] + " s" +  str(lvl))
-            col.append(color[lvl])
+    return lbl, col
     
 #~ '-' 	solid line style
 #~ '--'	dashed line style
@@ -361,16 +253,14 @@ def create_labels(cf):
 #~ ‘y’ 	yellow
 #~ ‘k’ 	black
 #~ ‘w’ 	white
-    
-    return lbl, col
 
-def plot(times, exp, cf = "none"):
+def plot(times, exp, cf):
     #=================== plot ===================
     
     lbl, col = create_labels(cf)
     
     
-    dims = atom_holder_.current_dims + vibron_holder_.current_dims
+    dims = [len(x) for x in cf["plot"]]
     
     f, ax = pl.subplots(len(dims))
     
@@ -391,44 +281,7 @@ def plot(times, exp, cf = "none"):
         
     pl.show()
 
-import time
-import datetime
-def integrate_cf(cf):
-    GREEN("start integration")
-    start_time = time.time()
-    at = []
-    for a in cf["atom"]:
-        at.append(atom(a[1], a[2]))
-    
-    vb = []
-    for v in cf["vibron"]:
-        vb.append(vibron(v[1], v[2], v[3]))
-    
-    ls = []
-    for l in cf["laser"]:
-        ls.append(laser(l[3], l[1], l[2]))
-        
-    rabi = cf["rabi"]
-    eta = cf["eta"]
-    
-    H = create_hamiltonian(at, vb, ls, rabi, eta, cutoff = cf["cutoff"])
-    phi = create_phi()
-    obs = create_obs()
-    
-    tlist = np.linspace(cf["lower"], cf["upper"], cf["measure"])
-    opts = q.Odeoptions(max_step = 0.01)
-    
-    res = q.mesolve(H, phi, tlist, [], obs, options = opts)
-    
-    end_time = time.time()
-    GREEN("integration done in {}".format(datetime.timedelta(seconds = int(end_time - start_time))))
-    
-    plot(res.times, res.expect, cf)
-    
-    atom_holder_.clear()
-    vibron_holder_.clear()
-
-def create_hamiltonian_eff(atoms, vibrons, lasers, _rabi, _eta, **kwargs):
+def create_hamiltonian(atoms, vibrons, lasers, _rabi, _eta, **kwargs):
     """
     :param atoms: a list of :class:`atom`
     :param vibrons: a list of :class:`vibron`
@@ -524,7 +377,10 @@ def create_hamiltonian_eff(atoms, vibrons, lasers, _rabi, _eta, **kwargs):
     GREEN("{1} of {2} terms survived the RWA (cutoff: {0})".format(cutoff, *rwa_takes))
     return H, col_args
 
-def integrate_cf_eff(cf, **kwargs):
+import time
+import datetime
+
+def integrate_cf(cf, **kwargs):
     global res
     GREEN("start integration")
     start_time = time.time()
@@ -553,7 +409,7 @@ def integrate_cf_eff(cf, **kwargs):
     rabi = cf["rabi"] #matrix
     eta = cf["eta"] #matrix
     
-    H, args = create_hamiltonian_eff(at, vb, ls, rabi, eta, cutoff = cf["cutoff"])
+    H, args = create_hamiltonian(at, vb, ls, rabi, eta, cutoff = cf["cutoff"])
     
     #------------------- set up event structure ------------------- 
     act = set()
@@ -599,12 +455,8 @@ def integrate_cf_eff(cf, **kwargs):
     #------------------- create states/obs ------------------- 
     
     phi = create_phi()
-    obs = create_obs()
-    laser_ops = []
-    callback = False
-    #~ obs, laser_ops, callback = create_obs2(cf)
     
-    #~ callback_fct(1, q.tensor(q.qeye(2), q.qeye(2), q.fock_dm(5, 2)))
+    obs, laser_ops, callback = create_obs(cf)
     
     opts = q.Odeoptions()
     opts.store_final_state = True
@@ -621,11 +473,12 @@ def integrate_cf_eff(cf, **kwargs):
         for i_h in h_idx:
             H_event.append([H[i_h][0], H[i_h][2]])
         if callback:
-            q.mesolve(H_event, phi, tlist_event, [], obs, options = opts, args = args)
+            data = q.mesolve(H_event, phi, tlist_event, [], obs, options = opts, args = args)
+            phi = data.final_state
         else:
-            res = q.mesolve(H_event, phi, tlist_event, [], obs, options = opts, args = args)
-            phi = res.final_state
-            col_res.append(res)
+            data = q.mesolve(H_event, phi, tlist_event, [], obs, options = opts, args = args)
+            phi = data.final_state
+            col_res.append(data)
     
     end_time = time.time()
     GREEN("integration done in {}".format(datetime.timedelta(seconds = int(end_time - start_time))))
@@ -638,8 +491,12 @@ def integrate_cf_eff(cf, **kwargs):
         res.times, res.expect = collect_times(*col_res), collect_expect(*col_res)
     
     for l in laser_ops:
-        l_res = np.zeros(cf["measure"])
-        for t, i_t in zipi(tlist):
-            l_res[i_t] = l(t)
-        res.expect.append(l_res)
+        l_res = np.zeros(len(res.times))
+        for t, i_t in zipi(res.times):
+            l_res[i_t] = l[0](t)
+        res.expect.insert(l[1], l_res)
+    
+    for exp in res.expect: #small fix
+        exp = exp[:len(res.times)]
+    
     return res.times, res.expect
