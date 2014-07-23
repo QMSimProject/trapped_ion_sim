@@ -58,8 +58,7 @@
 <span class="kn">from</span> <span class="nn">.atom_class</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">.vibron_class</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">.laser_class</span> <span class="kn">import</span> <span class="o">*</span>
-
-<span class="kn">from</span> <span class="nn">addon</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.helper</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="c">#=================== global variables ===================</span>
 <span class="n">default_cutoff</span> <span class="o">=</span> <span class="mi">100000</span>
@@ -100,39 +99,12 @@
 <div class="viewcode-block" id="callback_fct"><a class="viewcode-back" href="../../src.html#src.integration_routine.callback_fct">[docs]</a><span class="k">def</span> <span class="nf">callback_fct</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
     <span class="k">global</span> <span class="n">res</span>
     <span class="n">res</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">Qobj</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
-</div>
+    </div>
 <div class="viewcode-block" id="create_obs"><a class="viewcode-back" href="../../src.html#src.integration_routine.create_obs">[docs]</a><span class="k">def</span> <span class="nf">create_obs</span><span class="p">(</span><span class="n">cf</span><span class="p">):</span>
     <span class="k">global</span> <span class="n">res</span>
     <span class="n">flatten</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
     
-    <span class="k">def</span> <span class="nf">hold_args</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-            <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">pos</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            
-            <span class="k">def</span> <span class="nf">find_matching_bracket</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">pos_open</span><span class="p">):</span>
-                <span class="k">assert</span><span class="p">(</span><span class="n">expr</span><span class="p">[</span><span class="n">pos_open</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;(&quot;</span><span class="p">)</span>
-                <span class="n">pos</span> <span class="o">=</span> <span class="n">pos_open</span> <span class="o">+</span> <span class="mi">1</span>
-                
-                <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-                    <span class="n">next_open</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
-                    <span class="n">next_close</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
-                    
-                    <span class="k">if</span> <span class="n">next_open</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">next_close</span> <span class="o">&lt;</span> <span class="n">next_open</span><span class="p">:</span>
-                        <span class="n">pos_closed</span> <span class="o">=</span> <span class="n">next_close</span>
-                        <span class="k">break</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">pos</span> <span class="o">=</span> <span class="n">next_close</span> <span class="o">+</span> <span class="mi">1</span>
-                
-                <span class="k">return</span> <span class="n">expr</span><span class="p">[:</span><span class="n">pos_open</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">expr</span><span class="p">[</span><span class="n">pos_open</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">pos_closed</span><span class="p">],</span> <span class="n">expr</span><span class="p">[</span><span class="n">pos_closed</span><span class="p">:]</span>
-            
-            <span class="k">while</span> <span class="n">pos</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">ipos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">find_matching_bracket</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">ipos</span><span class="p">)</span>
-                <span class="n">expr</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-                <span class="n">pos</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
-        
-        <span class="k">return</span> <span class="n">expr</span>
+    <span class="n">tag_class</span><span class="o">.</span><span class="n">all_sys</span> <span class="o">=</span> <span class="n">atom_holder_</span><span class="o">.</span><span class="n">atom_list</span> <span class="o">+</span> <span class="n">vibron_holder_</span><span class="o">.</span><span class="n">vibron_list</span>
 
     <span class="n">pi</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">cf</span><span class="p">[</span><span class="s">&quot;plot&quot;</span><span class="p">])</span>
     <span class="c">#------------------- collect all names ------------------- </span>
@@ -144,34 +116,11 @@
     
     <span class="n">all_nm</span> <span class="o">=</span> <span class="n">a_nm</span> <span class="o">+</span> <span class="n">v_nm</span> <span class="o">+</span> <span class="n">l_nm</span>
     
-    
-    <span class="k">class</span> <span class="nc">tag_class</span><span class="p">():</span>
-        <span class="n">all_sys</span> <span class="o">=</span> <span class="n">atom_holder_</span><span class="o">.</span><span class="n">atom_list</span> <span class="o">+</span> <span class="n">vibron_holder_</span><span class="o">.</span><span class="n">vibron_list</span>
-        <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">off</span> <span class="o">=</span> <span class="n">offset</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">all_sys</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">off</span><span class="p">]</span><span class="o">.</span><span class="n">N</span>
-        <span class="k">def</span> <span class="nf">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">off</span>
-        <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">):</span>
-            <span class="kn">from</span> <span class="nn">qutip</span> <span class="kn">import</span> <span class="n">fock_dm</span>
-            <span class="kn">from</span> <span class="nn">qutip</span> <span class="kn">import</span> <span class="n">coherent_dm</span>
-            <span class="kn">from</span> <span class="nn">qutip</span> <span class="kn">import</span> <span class="n">thermal_dm</span>
-            <span class="kn">from</span> <span class="nn">qutip</span> <span class="kn">import</span> <span class="n">squeeze</span>
-            <span class="kn">from</span> <span class="nn">qutip</span> <span class="kn">import</span> <span class="n">destroy</span>
-            <span class="kn">from</span> <span class="nn">qutip</span> <span class="kn">import</span> <span class="n">create</span>
-            <span class="kn">from</span> <span class="nn">qutip</span> <span class="kn">import</span> <span class="n">sigmax</span>
-            <span class="kn">from</span> <span class="nn">qutip</span> <span class="kn">import</span> <span class="n">sigmay</span>
-            <span class="kn">from</span> <span class="nn">qutip</span> <span class="kn">import</span> <span class="n">sigmaz</span>
-            <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>
-            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">off</span><span class="p">,</span> <span class="nb">eval</span><span class="p">(</span><span class="n">op</span><span class="p">)]</span>
-    
     <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">i_a</span> <span class="ow">in</span> <span class="n">zipi</span><span class="p">(</span><span class="n">a_nm</span><span class="p">):</span>
-        <span class="k">exec</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="s">&quot; =  tag_class(&#39;&quot;</span> <span class="o">+</span> <span class="n">a</span> <span class="o">+</span> <span class="s">&quot;&#39;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_a</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">exec</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="s">&quot; =  tag_class(&#39;&quot;</span> <span class="o">+</span> <span class="n">a</span> <span class="o">+</span> <span class="s">&quot;&#39;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_a</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">(),</span> <span class="nb">globals</span><span class="p">()</span>
     
     <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">i_v</span> <span class="ow">in</span> <span class="n">zipi</span><span class="p">(</span><span class="n">v_nm</span><span class="p">):</span>
-        <span class="k">exec</span><span class="p">(</span><span class="n">v</span> <span class="o">+</span> <span class="s">&quot; =  tag_class(&#39;&quot;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s">&quot;&#39;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_v</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_nm</span><span class="p">))</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">exec</span><span class="p">(</span><span class="n">v</span> <span class="o">+</span> <span class="s">&quot; =  tag_class(&#39;&quot;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s">&quot;&#39;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_v</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_nm</span><span class="p">))</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">(),</span> <span class="nb">globals</span><span class="p">()</span>
     
     <span class="k">class</span> <span class="nc">laser_helper</span><span class="p">():</span>
         <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
@@ -196,16 +145,6 @@
             <span class="k">return</span> <span class="n">q</span><span class="o">.</span><span class="n">fidelity</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">ptrace</span><span class="p">(</span><span class="n">sys</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">closure</span>
     
-    <span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="o">*</span><span class="n">ops</span><span class="p">):</span>
-        <span class="c">#------------------- atom part ------------------- </span>
-        <span class="n">sys_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">i_d</span> <span class="ow">in</span> <span class="n">zipi</span><span class="p">(</span><span class="n">atom_holder_</span><span class="o">.</span><span class="n">current_dims</span> <span class="o">+</span> <span class="n">vibron_holder_</span><span class="o">.</span><span class="n">current_dims</span><span class="p">):</span>
-            <span class="n">sys_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">qeye</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">ops</span><span class="p">:</span>
-            <span class="n">sys_list</span><span class="p">[</span><span class="n">op</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">op</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        
-        <span class="k">return</span> <span class="n">q</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">sys_list</span><span class="p">)</span>
-    
     <span class="kn">from</span> <span class="nn">qutip</span> <span class="kn">import</span> <span class="n">expect</span>
     
     <span class="n">callback</span> <span class="o">=</span> <span class="bp">False</span>
@@ -221,12 +160,12 @@
                 <span class="k">break</span>
         
         <span class="k">if</span> <span class="n">is_laser</span><span class="p">:</span>
-            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;f = &quot;</span> <span class="o">+</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;f = &quot;</span> <span class="o">+</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">(),</span> <span class="nb">globals</span><span class="p">()</span>
             <span class="n">laser_fct</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="n">i_p</span><span class="p">])</span>
         <span class="k">elif</span> <span class="n">p</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;fidelity&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">callback</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="n">state</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;f = &quot;</span> <span class="o">+</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">exec</span><span class="p">(</span><span class="s">&quot;f = &quot;</span> <span class="o">+</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">(),</span> <span class="nb">globals</span><span class="p">()</span>
             <span class="n">fct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">op</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
@@ -243,93 +182,29 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">res</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">fct</span><span class="p">,</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;measure&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">callback_fct</span><span class="p">,</span> <span class="n">laser_fct</span><span class="p">,</span> <span class="n">callback</span>
+</div>
+<div class="viewcode-block" id="create_collpase_ops"><a class="viewcode-back" href="../../src.html#src.integration_routine.create_collpase_ops">[docs]</a><span class="k">def</span> <span class="nf">create_collpase_ops</span><span class="p">(</span><span class="n">cf</span><span class="p">):</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;collapse&quot;</span><span class="p">]</span>
+    
+    <span class="n">a_nm</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;atom&quot;</span><span class="p">]]</span>
+    <span class="n">v_nm</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;vibron&quot;</span><span class="p">]]</span>
+    
+    <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="n">hold_args</span><span class="p">(</span><span class="n">a_nm</span> <span class="o">+</span> <span class="n">v_nm</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
+    
+    <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">i_a</span> <span class="ow">in</span> <span class="n">zipi</span><span class="p">(</span><span class="n">a_nm</span><span class="p">):</span>
+        <span class="k">exec</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="s">&quot; =  tag_class(&#39;&quot;</span> <span class="o">+</span> <span class="n">a</span> <span class="o">+</span> <span class="s">&quot;&#39;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_a</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">(),</span> <span class="nb">globals</span><span class="p">()</span>
+    
+    <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">i_v</span> <span class="ow">in</span> <span class="n">zipi</span><span class="p">(</span><span class="n">v_nm</span><span class="p">):</span>
+        <span class="k">exec</span><span class="p">(</span><span class="n">v</span> <span class="o">+</span> <span class="s">&quot; =  tag_class(&#39;&quot;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s">&quot;&#39;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_v</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a_nm</span><span class="p">))</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">(),</span> <span class="nb">globals</span><span class="p">()</span>
+    
+    <span class="n">col_ops</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">col</span><span class="p">:</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+        <span class="n">col_ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">col_ops</span>
     </div>
-<div class="viewcode-block" id="create_labels"><a class="viewcode-back" href="../../src.html#src.integration_routine.create_labels">[docs]</a><span class="k">def</span> <span class="nf">create_labels</span><span class="p">(</span><span class="n">cf</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    helper function for :func:`plot`</span>
-<span class="sd">    </span>
-<span class="sd">    just specifies the color and linestyle of the plots and extracts the propper names from the cf</span>
-<span class="sd">    </span>
-<span class="sd">    :param cf: canonical form of the integration problem</span>
-<span class="sd">    :returns: the label as well as color list for plotting</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">flatten</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
-    
-    <span class="n">lbl</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">col</span> <span class="o">=</span> <span class="p">[]</span>
-    
-    <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;b-&quot;</span><span class="p">,</span> <span class="s">&quot;g-&quot;</span><span class="p">,</span> <span class="s">&quot;c-&quot;</span><span class="p">,</span> <span class="s">&quot;m-&quot;</span><span class="p">,</span> <span class="s">&quot;r-&quot;</span><span class="p">,</span> <span class="s">&quot;y-&quot;</span><span class="p">,</span> <span class="s">&quot;b:&quot;</span><span class="p">,</span> <span class="s">&quot;g:&quot;</span><span class="p">,</span> <span class="s">&quot;c:&quot;</span><span class="p">,</span> <span class="s">&quot;m:&quot;</span><span class="p">,</span> <span class="s">&quot;r:&quot;</span><span class="p">,</span> <span class="s">&quot;y:&quot;</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">subplot</span> <span class="ow">in</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;plot&quot;</span><span class="p">]:</span>
-        <span class="n">lbl</span> <span class="o">+=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">subplot</span><span class="p">]</span>
-        <span class="n">col</span> <span class="o">+=</span> <span class="n">color</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">subplot</span><span class="p">)]</span>
-    
-    <span class="k">return</span> <span class="n">lbl</span><span class="p">,</span> <span class="n">col</span>
-    
-<span class="c">#~ &#39;-&#39; 	solid line style</span>
-<span class="c">#~ &#39;--&#39;	dashed line style</span>
-<span class="c">#~ &#39;-.&#39;	dash-dot line style</span>
-<span class="c">#~ &#39;:&#39; 	dotted line style</span>
-<span class="c">#~ &#39;.&#39; 	point marker</span>
-<span class="c">#~ &#39;,&#39; 	pixel marker</span>
-<span class="c">#~ &#39;o&#39; 	circle marker</span>
-<span class="c">#~ &#39;v&#39; 	triangle_down marker</span>
-<span class="c">#~ &#39;^&#39; 	triangle_up marker</span>
-<span class="c">#~ &#39;&lt;&#39; 	triangle_left marker</span>
-<span class="c">#~ &#39;&gt;&#39; 	triangle_right marker</span>
-<span class="c">#~ &#39;1&#39; 	tri_down marker</span>
-<span class="c">#~ &#39;2&#39; 	tri_up marker</span>
-<span class="c">#~ &#39;3&#39; 	tri_left marker</span>
-<span class="c">#~ &#39;4&#39; 	tri_right marker</span>
-<span class="c">#~ &#39;s&#39; 	square marker</span>
-<span class="c">#~ &#39;p&#39; 	pentagon marker</span>
-<span class="c">#~ &#39;*&#39; 	star marker</span>
-<span class="c">#~ &#39;h&#39; 	hexagon1 marker</span>
-<span class="c">#~ &#39;H&#39; 	hexagon2 marker</span>
-<span class="c">#~ &#39;+&#39; 	plus marker</span>
-<span class="c">#~ &#39;x&#39; 	x marker</span>
-<span class="c">#~ &#39;D&#39; 	diamond marker</span>
-<span class="c">#~ &#39;d&#39; 	thin_diamond marker</span>
-<span class="c">#~ &#39;|&#39; 	vline marker</span>
-<span class="c">#~ &#39;_&#39; 	hline marker</span>
-<span class="c">#~ </span>
-<span class="c">#~ The following color abbreviations are supported:</span>
-<span class="c">#~ character 	color</span>
-<span class="c">#~ ‘b’ 	blue</span>
-<span class="c">#~ ‘g’ 	green</span>
-<span class="c">#~ ‘r’ 	red</span>
-<span class="c">#~ ‘c’ 	cyan</span>
-<span class="c">#~ ‘m’ 	magenta</span>
-<span class="c">#~ ‘y’ 	yellow</span>
-<span class="c">#~ ‘k’ 	black</span>
-<span class="c">#~ ‘w’ 	white</span>
-</div>
-<div class="viewcode-block" id="plot"><a class="viewcode-back" href="../../src.html#src.integration_routine.plot">[docs]</a><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">cf</span><span class="p">):</span>
-    <span class="c">#=================== plot ===================</span>
-    
-    <span class="n">lbl</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">create_labels</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span>
-    
-    
-    <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;plot&quot;</span><span class="p">]]</span>
-    
-    <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">))</span>
-    
-    <span class="n">cur</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Time&quot;</span><span class="p">)</span>
-    <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;exp val&quot;</span><span class="p">)</span>
-    <span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">ex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">exp</span><span class="p">)):</span>
-        <span class="k">if</span> <span class="n">ex</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">cur</span> <span class="o">+</span> <span class="n">dims</span><span class="p">[</span><span class="n">idx</span><span class="p">]):</span>
-            <span class="n">cur</span> <span class="o">+=</span> <span class="n">dims</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
-        
-        <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">exp</span><span class="p">[</span><span class="n">ex</span><span class="p">],</span> <span class="n">col</span><span class="p">[</span><span class="n">ex</span><span class="p">])</span>
-        <span class="n">pl</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">lbl</span><span class="p">[</span><span class="n">cur</span><span class="p">:(</span><span class="n">cur</span> <span class="o">+</span> <span class="n">dims</span><span class="p">[</span><span class="n">idx</span><span class="p">])],</span> <span class="n">loc</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
-        <span class="n">pl</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="o">-</span><span class="mf">0.005</span><span class="p">,</span> <span class="mf">1.005</span><span class="p">])</span>
-        
-    <span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</div>
 <div class="viewcode-block" id="create_hamiltonian"><a class="viewcode-back" href="../../src.html#src.integration_routine.create_hamiltonian">[docs]</a><span class="k">def</span> <span class="nf">create_hamiltonian</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">vibrons</span><span class="p">,</span> <span class="n">lasers</span><span class="p">,</span> <span class="n">_rabi</span><span class="p">,</span> <span class="n">_eta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :param atoms: a list of :class:`atom`</span>
@@ -348,7 +223,7 @@
     
     <span class="n">H</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">col_args</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">col_args</span><span class="p">[</span><span class="s">&quot;hb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">col_args</span><span class="p">[</span><span class="s">&quot;hb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;hbar&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     
     <span class="n">rwa_takes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
     
@@ -458,7 +333,7 @@
     <span class="n">rabi</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;rabi&quot;</span><span class="p">]</span> <span class="c">#matrix</span>
     <span class="n">eta</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;eta&quot;</span><span class="p">]</span> <span class="c">#matrix</span>
     
-    <span class="n">H</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">create_hamiltonian</span><span class="p">(</span><span class="n">at</span><span class="p">,</span> <span class="n">vb</span><span class="p">,</span> <span class="n">ls</span><span class="p">,</span> <span class="n">rabi</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;cutoff&quot;</span><span class="p">])</span>
+    <span class="n">H</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">create_hamiltonian</span><span class="p">(</span><span class="n">at</span><span class="p">,</span> <span class="n">vb</span><span class="p">,</span> <span class="n">ls</span><span class="p">,</span> <span class="n">rabi</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;cutoff&quot;</span><span class="p">],</span> <span class="n">hb</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;hbar&quot;</span><span class="p">])</span>
     
     <span class="c">#------------------- set up event structure ------------------- </span>
     <span class="n">act</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -507,6 +382,8 @@
     
     <span class="n">obs</span><span class="p">,</span> <span class="n">laser_ops</span><span class="p">,</span> <span class="n">callback</span> <span class="o">=</span> <span class="n">create_obs</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span>
     
+    <span class="n">col_ops</span> <span class="o">=</span> <span class="n">create_collpase_ops</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span>
+    
     <span class="n">opts</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">Odeoptions</span><span class="p">()</span>
     <span class="n">opts</span><span class="o">.</span><span class="n">store_final_state</span> <span class="o">=</span> <span class="bp">True</span>
     
@@ -522,10 +399,10 @@
         <span class="k">for</span> <span class="n">i_h</span> <span class="ow">in</span> <span class="n">h_idx</span><span class="p">:</span>
             <span class="n">H_event</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">H</span><span class="p">[</span><span class="n">i_h</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">H</span><span class="p">[</span><span class="n">i_h</span><span class="p">][</span><span class="mi">2</span><span class="p">]])</span>
         <span class="k">if</span> <span class="n">callback</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">mesolve</span><span class="p">(</span><span class="n">H_event</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tlist_event</span><span class="p">,</span> <span class="p">[],</span> <span class="n">obs</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">mesolve</span><span class="p">(</span><span class="n">H_event</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tlist_event</span><span class="p">,</span> <span class="n">col_ops</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="p">)</span>
             <span class="n">phi</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">final_state</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">mesolve</span><span class="p">(</span><span class="n">H_event</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tlist_event</span><span class="p">,</span> <span class="p">[],</span> <span class="n">obs</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">mesolve</span><span class="p">(</span><span class="n">H_event</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tlist_event</span><span class="p">,</span> <span class="n">col_ops</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="p">)</span>
             <span class="n">phi</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">final_state</span>
             <span class="n">col_res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     
