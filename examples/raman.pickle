@@ -22,42 +22,49 @@ p12
 aS'0'
 aS'[[10, 110*pi]]'
 p13
-aasS'plot'
+aasS'collapse'
 p14
-S'atom1(fock_dm(N, 0)); atom1 0\natom1(fock_dm(N, 1)); atom1 100\natom1(fock_dm(N, 2)); atom1 1000\nlaser1(.2); laser'
+S'atom1(destroy(N))'
 p15
-sS'interval'
+sS'plot'
 p16
-S'[0, 120*pi]'
+S'atom1(fock_dm(N, 0)); atom1 0\natom1(fock_dm(N, 1)); atom1 100\natom1(fock_dm(N, 2)); atom1 1000\nlaser1(.2); laser'
 p17
-sS'measure'
+sS'interval'
 p18
-S'1000'
+S'[0, 120*pi]'
 p19
-sS'vibron'
+sS'measure'
 p20
-(lp21
-sS'eta'
+S'1000'
+p21
+sS'vibron'
 p22
 (lp23
-(lp24
-asS'atom'
-p25
+sS'eta'
+p24
+(lp25
 (lp26
-(lp27
+asS'atom'
+p27
+(lp28
+(lp29
 S'atom1'
-p28
-aS'[0, 100, 1000]'
-p29
-aS'diag([1, 0, 0])'
 p30
-aasS'rabi'
+aS'[0, 100, 1000]'
 p31
-(lp32
-(lp33
-S'.1*sqrt(2)'
-p34
-aa(lp35
+aS'diag([1, 0, 0])'
+p32
+aasS'rabi'
+p33
+(lp34
+(lp35
 S'.1*sqrt(2)'
 p36
-aas.
+aa(lp37
+S'.1*sqrt(2)'
+p38
+aasS'hbar'
+p39
+S'1'
+s.

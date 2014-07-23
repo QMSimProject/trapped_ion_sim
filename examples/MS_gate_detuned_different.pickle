@@ -37,75 +37,82 @@ p19
 aS'0'
 aS'[[0, 100*pi]]'
 p20
-aasS'plot'
+aasS'collapse'
 p21
-S'Ca(fock_dm(N, 0)); Ca 0\nCa(fock_dm(N, 1)); Ca 100\nCa(fock_dm(N, 2)); Ca 1000\n\nBe(fock_dm(N, 0)); Be 0\nBe(fock_dm(N, 1)); Be 200\nBe(fock_dm(N, 2)); Be 1000\n\nvib1(fock_dm(N, 0)); vib1 0\nvib1(fock_dm(N, 1)); vib1 1\nvib1(fock_dm(N, 2)); vib1 2'
+S'atom1(destroy(N))'
 p22
-sS'interval'
+sS'plot'
 p23
-S'[0*pi, 100*pi]'
+S'Ca(fock_dm(N, 0)); Ca 0\nCa(fock_dm(N, 1)); Ca 100\nCa(fock_dm(N, 2)); Ca 1000\n\nBe(fock_dm(N, 0)); Be 0\nBe(fock_dm(N, 1)); Be 200\nBe(fock_dm(N, 2)); Be 1000\n\nvib1(fock_dm(N, 0)); vib1 0\nvib1(fock_dm(N, 1)); vib1 1\nvib1(fock_dm(N, 2)); vib1 2'
 p24
-sS'measure'
+sS'interval'
 p25
-S'1000'
+S'[0*pi, 100*pi]'
 p26
-sS'vibron'
+sS'measure'
 p27
-(lp28
-(lp29
+S'1000'
+p28
+sS'vibron'
+p29
+(lp30
+(lp31
 S'vib1'
-p30
-aS'10'
-p31
-aS'diag([0, 1, 0])'
 p32
-aasS'eta'
+aS'10'
 p33
-(lp34
-(lp35
-S'.2'
-p36
-aa(lp37
+aS'diag([0, 1, 0])'
+p34
+aasS'eta'
+p35
+(lp36
+(lp37
 S'.2'
 p38
+aa(lp39
+S'.2'
+p40
 aasS'atom'
-p39
-(lp40
-(lp41
+p41
+(lp42
+(lp43
 S'Ca'
-p42
-aS'[0, 100, 1000]'
-p43
-aS'diag([0, 1,  0])'
 p44
-aa(lp45
-S'Be'
+aS'[0, 100, 1000]'
+p45
+aS'diag([0, 1,  0])'
 p46
-aS'[0, 200, 1000]'
-p47
-aS'diag([1, 0, 0])'
+aa(lp47
+S'Be'
 p48
-aasS'rabi'
+aS'[0, 200, 1000]'
 p49
-(lp50
-(lp51
+aS'diag([1, 0, 0])'
+p50
+aasS'rabi'
+p51
+(lp52
+(lp53
 S'.5'
-p52
+p54
 aS'.5'
-p53
-aa(lp54
-S'.5'
 p55
-aS'.5'
-p56
-aa(lp57
+aa(lp56
 S'.5'
+p57
+aS'.5'
 p58
-aS'.5'
-p59
-aa(lp60
+aa(lp59
 S'.5'
-p61
+p60
 aS'.5'
-p62
-aas.
+p61
+aa(lp62
+S'.5'
+p63
+aS'.5'
+p64
+aasS'hbar'
+p65
+S'1'
+s.

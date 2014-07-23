@@ -10,6 +10,8 @@ from package_proxy import *
 if __name__ == "__main__":
     cf = {}
     
+    cf["hbar"] = 1
+    
     cf["atom"] = []
     cf["atom"].append(["atom1", [0, 100], np.diag([1, 0])])
     cf["atom"].append(["atom2", [0, 100], np.diag([1, 0])])
@@ -30,7 +32,7 @@ if __name__ == "__main__":
     cf["cutoff"] = 5
     cf["plot"] = [[["atom1(fock_dm(N, 0))", "GS1"], ["fidelity(atom2(fock_dm(N, 1)), state)", "FID"]], [["atom2(fock_dm(N, 0))", "GS2"], ["atom2(fock_dm(N, 1))", "ES2"]], [["vib1(fock_dm(N, 0))", "V0"], ["vib1(fock_dm(N, 1))", "V1"], ["vib1(fock_dm(N, 2))", "V2"]], [["laser1(.5)", "laser1"]]]
     
-    cf["collaps"] = []
+    cf["collapse"] = []
     
     t, e = integrate_cf(cf)
     plot(t, e, cf)

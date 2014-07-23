@@ -6,7 +6,8 @@
 # File:    gui.py
 
 from qt_import import *
-from .integration_routine import integrate_cf, integrate_cf, plot
+from .integration_routine import integrate_cf
+from .plot import plot
 
 from src_import import *
 
@@ -127,15 +128,19 @@ class Q2IntegrationWidget(QWidget):
         super(Q2IntegrationWidget, self).__init__(parent)
         
         #=================== widgets ===================
+        self.hbar = QLineEdit(self)
         self.interval = QLineEdit(self)
         self.measure = QLineEdit(self)
         self.cutoff = QLineEdit(self)
         
         #------------------- settings ------------------- 
+        self.hbar.setPlaceholderText("hbar")
+        self.hbar.setText("1.05457173e-34")
         self.interval.setPlaceholderText("intervall")
         self.measure.setPlaceholderText("N")
         self.cutoff.setPlaceholderText("cutoff")
         
+        self.hbar.setStatusTip("value for the reduced planck constant")
         self.interval.setStatusTip("integration intervall e.g: [0, 10*pi]")
         self.measure.setStatusTip("numbers of measurements")
         self.cutoff.setStatusTip("cutoff frequency for rwa")
@@ -143,9 +148,10 @@ class Q2IntegrationWidget(QWidget):
         #=================== layout ===================
         grid = QGridLayout()
         
-        grid.addWidget(self.interval     , 0, 0, 1, 1)
-        grid.addWidget(self.measure      , 0, 1, 1, 1)
-        grid.addWidget(self.cutoff       , 0, 2, 1, 1)
+        grid.addWidget(self.hbar         , 0, 0, 1, 1)
+        grid.addWidget(self.interval     , 0, 1, 1, 1)
+        grid.addWidget(self.measure      , 0, 2, 1, 1)
+        grid.addWidget(self.cutoff       , 0, 3, 1, 1)
         self.setLayout(grid)
         
         self.show()
@@ -187,7 +193,7 @@ class Q2PlotWidget(QWidget):
         
         self.parent = parent
         self.text = QTextEdit(self)
-        self.btn = QPushButton("autogenerate", self)
+        self.btn = QPushButton("Delete and Autogenerate", self)
         self.btn.pressed.connect(self.autogen)
         
         grid.addWidget(self.text, 1, 1, 1, 1)
@@ -256,6 +262,7 @@ class Q2DisplayWidget(QMainWindow):
         #=================== layout ===================
         
         self.plot = Q2PlotWidget(self)
+        self.collapse = QTextEdit(self)
         self.init_dynaminc_ui()
         
         self.statusBar()
@@ -330,12 +337,13 @@ class Q2DisplayWidget(QMainWindow):
             for e, e_i in zip(e_row, range(len(e_row))):
                 grid.addWidget(e, 3 + len(self.laser_w) + e_row_i, 2 + e_i, 1, 1)
         
-        grid.addWidget(self.itg_w     , 3 + len(self.laser_w) + len(self.vibron_w), 1, 1, 1)
+        grid.addWidget(self.itg_w     , 3 + len(self.laser_w) + len(self.vibron_w), 1, 1, 2)
         self.setup.setLayout(grid)
         
         tab = QTabWidget(self)
         tab.addTab(self.setup, "Setup")
         tab.addTab(self.plot, "Plot")
+        tab.addTab(self.collapse, "Collapse")
         self.setCentralWidget(tab)
         self.resize(0, 0)
         self.show()
@@ -428,6 +436,7 @@ class Q2DisplayWidget(QMainWindow):
                 cf["eta"][e_i].append(eta)
         
         #=================== parse integration ===================
+        cf["hbar"] = eval(str(self.itg_w.hbar.text()))
         cf["upper"] = eval(str(self.itg_w.interval.text()))[1]
         cf["lower"] = eval(str(self.itg_w.interval.text()))[0]
         cf["measure"] = eval(str(self.itg_w.measure.text()))
@@ -450,6 +459,18 @@ class Q2DisplayWidget(QMainWindow):
             new.pop()
         
         cf["plot"] = new
+        
+        #=================== parse collapse ===================
+        col = str(self.collapse.toPlainText())
+        col = col.split("\n")
+        
+        new = []
+        for c in col:
+            if c.find("(") != -1:
+                new.append(c.split("#")[0])
+        
+        cf["collapse"] = new
+        
         return cf
     
     def save_parse(self):
@@ -511,9 +532,10 @@ class Q2DisplayWidget(QMainWindow):
         cf["measure"] = str(self.itg_w.measure.text())
         cf["cutoff"] = str(self.itg_w.cutoff.text())
         
-        #=================== parse plot ===================
+        #=================== parse plot/hbar/collapse ===================
         cf["plot"] = str(self.plot.text.toPlainText())
-        
+        cf["hbar"] = str(self.itg_w.hbar.text())
+        cf["collapse"] = str(self.collapse.toPlainText())
         return cf
         
     def load_parse(self, cf):
@@ -553,12 +575,14 @@ class Q2DisplayWidget(QMainWindow):
         self.itg_w.measure.setText(cf["measure"])
         self.itg_w.cutoff.setText(cf["cutoff"])
         
-        #=================== parse plot ===================
+        #=================== parse plot/hbar/collapse ===================
         self.plot.text.setText(cf["plot"])
+        self.itg_w.hbar.setText(cf["hbar"])
+        self.collapse.setText(cf["collapse"])
     
     def save(self):
         print("save")
-        fileName = QFileDialog.getSaveFileName(self, "Open File", "~/", "Pickle Files (*.pickle)")
+        fileName = QFileDialog.getSaveFileName(self, "Save File", "~/", "Pickle Files (*.pickle)")
         if qt_binding == "PySide":
             file_name = str(fileName[0])
         else:

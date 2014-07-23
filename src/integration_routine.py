@@ -9,8 +9,7 @@ from .src_import import *
 from .atom_class import *
 from .vibron_class import *
 from .laser_class import *
-
-from addon import *
+from .helper import *
 
 #=================== global variables ===================
 default_cutoff = 100000
@@ -51,39 +50,12 @@ res = res_collector()
 def callback_fct(t, state):
     global res
     res.measure(t, q.Qobj(state))
-
+    
 def create_obs(cf):
     global res
     flatten = lambda l: [y for x in l for y in x]
     
-    def hold_args(names, expr):
-        for n in names:
-            pos = 0
-            pos = expr.find(n)
-            
-            def find_matching_bracket(expr, pos_open):
-                assert(expr[pos_open] == "(")
-                pos = pos_open + 1
-                
-                while True:
-                    next_open = expr.find("(", pos)
-                    next_close = expr.find(")", pos)
-                    
-                    if next_open == -1 or next_close < next_open:
-                        pos_closed = next_close
-                        break
-                    else:
-                        pos = next_close + 1
-                
-                return expr[:pos_open + 1], expr[pos_open + 1: pos_closed], expr[pos_closed:]
-            
-            while pos != -1:
-                ipos = pos + len(n)
-                f = find_matching_bracket(expr, ipos)
-                expr = f[0] + "'" + f[1] + "'" + f[2]
-                pos = expr.find(n, pos + 2)
-        
-        return expr
+    tag_class.all_sys = atom_holder_.atom_list + vibron_holder_.vibron_list
 
     pi = flatten(cf["plot"])
     #------------------- collect all names ------------------- 
@@ -95,34 +67,11 @@ def create_obs(cf):
     
     all_nm = a_nm + v_nm + l_nm
     
-    
-    class tag_class():
-        all_sys = atom_holder_.atom_list + vibron_holder_.vibron_list
-        def __init__ (self, name, idx, offset = 0):
-            self.name = name
-            self.idx = idx
-            self.off = offset
-            self.N = self.__class__.all_sys[self.idx + self.off].N
-        def __int__(self):
-            return self.idx + self.off
-        def __call__(self, op):
-            from qutip import fock_dm
-            from qutip import coherent_dm
-            from qutip import thermal_dm
-            from qutip import squeeze
-            from qutip import destroy
-            from qutip import create
-            from qutip import sigmax
-            from qutip import sigmay
-            from qutip import sigmaz
-            N = self.N
-            return [self.idx + self.off, eval(op)]
-    
     for a, i_a in zipi(a_nm):
-        exec(a + " =  tag_class('" + a + "', " + str(i_a) + ")") in locals()
+        exec(a + " =  tag_class('" + a + "', " + str(i_a) + ")") in locals(), globals()
     
     for v, i_v in zipi(v_nm):
-        exec(v + " =  tag_class('" + v + "', " + str(i_v) + ", " + str(len(a_nm)) + ")") in locals()
+        exec(v + " =  tag_class('" + v + "', " + str(i_v) + ", " + str(len(a_nm)) + ")") in locals(), globals()
     
     class laser_helper():
         def __init__(self, pattern):
@@ -147,16 +96,6 @@ def create_obs(cf):
             return q.fidelity(op, state.ptrace(sys))
         return closure
     
-    def tensor(*ops):
-        #------------------- atom part ------------------- 
-        sys_list = []
-        for d, i_d in zipi(atom_holder_.current_dims + vibron_holder_.current_dims):
-            sys_list.append(q.qeye(d))
-        for op in ops:
-            sys_list[op[0]] = op[1]
-        
-        return q.tensor(sys_list)
-    
     from qutip import expect
     
     callback = False
@@ -172,12 +111,12 @@ def create_obs(cf):
                 break
         
         if is_laser:
-            exec("f = " + p) in locals()
+            exec("f = " + p) in locals(), globals()
             laser_fct.append([f, i_p])
         elif p.find("fidelity") != -1:
             callback = True
             state = 1
-            exec("f = " + p) in locals()
+            exec("f = " + p) in locals(), globals()
             fct.append(f)
         else:
             op = tensor(eval(p))
@@ -194,93 +133,29 @@ def create_obs(cf):
     else:
         res.init(fct, cf["measure"])
         return callback_fct, laser_fct, callback
-    
-def create_labels(cf):
-    """
-    helper function for :func:`plot`
-    
-    just specifies the color and linestyle of the plots and extracts the propper names from the cf
-    
-    :param cf: canonical form of the integration problem
-    :returns: the label as well as color list for plotting
-    """
-    flatten = lambda l: [y for x in l for y in x]
-    
-    lbl = []
-    col = []
-    
-    color = ["b-", "g-", "c-", "m-", "r-", "y-", "b:", "g:", "c:", "m:", "r:", "y:"]
-    for subplot in cf["plot"]:
-        lbl += [x[1] for x in subplot]
-        col += color[:len(subplot)]
-    
-    return lbl, col
-    
-#~ '-' 	solid line style
-#~ '--'	dashed line style
-#~ '-.'	dash-dot line style
-#~ ':' 	dotted line style
-#~ '.' 	point marker
-#~ ',' 	pixel marker
-#~ 'o' 	circle marker
-#~ 'v' 	triangle_down marker
-#~ '^' 	triangle_up marker
-#~ '<' 	triangle_left marker
-#~ '>' 	triangle_right marker
-#~ '1' 	tri_down marker
-#~ '2' 	tri_up marker
-#~ '3' 	tri_left marker
-#~ '4' 	tri_right marker
-#~ 's' 	square marker
-#~ 'p' 	pentagon marker
-#~ '*' 	star marker
-#~ 'h' 	hexagon1 marker
-#~ 'H' 	hexagon2 marker
-#~ '+' 	plus marker
-#~ 'x' 	x marker
-#~ 'D' 	diamond marker
-#~ 'd' 	thin_diamond marker
-#~ '|' 	vline marker
-#~ '_' 	hline marker
-#~ 
-#~ The following color abbreviations are supported:
-#~ character 	color
-#~ ‘b’ 	blue
-#~ ‘g’ 	green
-#~ ‘r’ 	red
-#~ ‘c’ 	cyan
-#~ ‘m’ 	magenta
-#~ ‘y’ 	yellow
-#~ ‘k’ 	black
-#~ ‘w’ 	white
 
-def plot(times, exp, cf):
-    #=================== plot ===================
+def create_collpase_ops(cf):
+    col = cf["collapse"]
     
-    lbl, col = create_labels(cf)
+    a_nm = [a[0] for a in cf["atom"]]
+    v_nm = [a[0] for a in cf["vibron"]]
     
+    col = [hold_args(a_nm + v_nm, x) for x in col]
     
-    dims = [len(x) for x in cf["plot"]]
+    for a, i_a in zipi(a_nm):
+        exec(a + " =  tag_class('" + a + "', " + str(i_a) + ")") in locals(), globals()
     
-    f, ax = pl.subplots(len(dims))
+    for v, i_v in zipi(v_nm):
+        exec(v + " =  tag_class('" + v + "', " + str(i_v) + ", " + str(len(a_nm)) + ")") in locals(), globals()
     
-    cur = 0
-    idx = 0
-    pl.xlabel("Time")
-    pl.ylabel("exp val")
-    pl.subplot(len(dims), 1, idx)
-    for ex in range(len(exp)):
-        if ex >= (cur + dims[idx]):
-            cur += dims[idx]
-            idx += 1
-            pl.subplot(len(dims), 1, idx)
-        
-        pl.plot(times, exp[ex], col[ex])
-        pl.legend(lbl[cur:(cur + dims[idx])], loc = 5)
-        pl.ylim([-0.005, 1.005])
-        
-    pl.show()
-
+    col_ops = []
+    
+    for c in col:
+        op = tensor(eval(c))
+        col_ops.append(op)
+    
+    return col_ops
+    
 def create_hamiltonian(atoms, vibrons, lasers, _rabi, _eta, **kwargs):
     """
     :param atoms: a list of :class:`atom`
@@ -299,7 +174,7 @@ def create_hamiltonian(atoms, vibrons, lasers, _rabi, _eta, **kwargs):
     
     H = []
     col_args = {}
-    col_args["hb"] = 1
+    col_args["hb"] = kwargs.get("hbar", 1)
     
     rwa_takes = [0, 0]
     
@@ -409,7 +284,7 @@ def integrate_cf(cf, **kwargs):
     rabi = cf["rabi"] #matrix
     eta = cf["eta"] #matrix
     
-    H, args = create_hamiltonian(at, vb, ls, rabi, eta, cutoff = cf["cutoff"])
+    H, args = create_hamiltonian(at, vb, ls, rabi, eta, cutoff = cf["cutoff"], hb = cf["hbar"])
     
     #------------------- set up event structure ------------------- 
     act = set()
@@ -458,6 +333,8 @@ def integrate_cf(cf, **kwargs):
     
     obs, laser_ops, callback = create_obs(cf)
     
+    col_ops = create_collpase_ops(cf)
+    
     opts = q.Odeoptions()
     opts.store_final_state = True
     
@@ -473,10 +350,10 @@ def integrate_cf(cf, **kwargs):
         for i_h in h_idx:
             H_event.append([H[i_h][0], H[i_h][2]])
         if callback:
-            data = q.mesolve(H_event, phi, tlist_event, [], obs, options = opts, args = args)
+            data = q.mesolve(H_event, phi, tlist_event, col_ops, obs, options = opts, args = args)
             phi = data.final_state
         else:
-            data = q.mesolve(H_event, phi, tlist_event, [], obs, options = opts, args = args)
+            data = q.mesolve(H_event, phi, tlist_event, col_ops, obs, options = opts, args = args)
             phi = data.final_state
             col_res.append(data)
     
