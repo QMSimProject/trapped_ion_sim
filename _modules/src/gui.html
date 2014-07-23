@@ -55,10 +55,10 @@
 <span class="c"># File:    gui.py</span>
 
 <span class="kn">from</span> <span class="nn">qt_import</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.integration_routine</span> <span class="kn">import</span> <span class="n">integrate_cf</span><span class="p">,</span> <span class="n">integrate_cf_eff</span>
+<span class="kn">from</span> <span class="nn">.integration_routine</span> <span class="kn">import</span> <span class="n">integrate_cf</span><span class="p">,</span> <span class="n">integrate_cf</span><span class="p">,</span> <span class="n">plot</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">src_import</span> <span class="kn">import</span> <span class="o">*</span>
+
 
 <div class="viewcode-block" id="Q2LaserWidget"><a class="viewcode-back" href="../../src.html#src.gui.Q2LaserWidget">[docs]</a><span class="k">class</span> <span class="nc">Q2LaserWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="n">__laser_counter</span> <span class="o">=</span> <span class="mi">0</span>
@@ -234,11 +234,19 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">Q2PlotWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
         <span class="n">grid</span> <span class="o">=</span> <span class="n">QGridLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         
-        <span class="n">grid</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">QTextEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">grid</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">QTextEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s">&quot;autogenerate&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btn</span><span class="o">.</span><span class="n">pressed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autogen</span><span class="p">)</span>
         
+        <span class="n">grid</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">btn</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Q2PlotWidget.autogen"><a class="viewcode-back" href="../../src.html#src.gui.Q2PlotWidget.autogen">[docs]</a>    <span class="k">def</span> <span class="nf">autogen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">autogen</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     </div></div>
 <div class="viewcode-block" id="Q2DisplayWidget"><a class="viewcode-back" href="../../src.html#src.gui.Q2DisplayWidget">[docs]</a><span class="k">class</span> <span class="nc">Q2DisplayWidget</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
 <div class="viewcode-block" id="Q2DisplayWidget.__init__"><a class="viewcode-back" href="../../src.html#src.gui.Q2DisplayWidget.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
@@ -294,15 +302,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">save_action</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">itg_action</span><span class="p">)</span>
         
+        <span class="c">#=================== layout ===================</span>
         
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">Q2PlotWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_dynaminc_ui</span><span class="p">()</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&quot;working title&quot;</span><span class="p">)</span>
-        <span class="c">#=================== layout ===================</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&quot;working title&quot;</span><span class="p">)</span></div>
 <div class="viewcode-block" id="Q2DisplayWidget.init_dynaminc_ui"><a class="viewcode-back" href="../../src.html#src.gui.Q2DisplayWidget.init_dynaminc_ui">[docs]</a>    <span class="k">def</span> <span class="nf">init_dynaminc_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        
         <span class="n">grid</span> <span class="o">=</span> <span class="n">QGridLayout</span><span class="p">()</span>
         <span class="n">grid</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_w</span>     <span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         
@@ -375,17 +383,32 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
         
         <span class="n">tab</span> <span class="o">=</span> <span class="n">QTabWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">scroll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span>
-        <span class="c">#~ scroll = QScrollArea(self)</span>
-        <span class="c">#~ scroll.setWidget(self.setup)</span>
-        <span class="n">tab</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="n">scroll</span><span class="p">,</span> <span class="s">&quot;Setup&quot;</span><span class="p">)</span>
-        <span class="n">tab</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="n">Q2PlotWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="s">&quot;Plot&quot;</span><span class="p">)</span>
+        <span class="n">tab</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">,</span> <span class="s">&quot;Setup&quot;</span><span class="p">)</span>
+        <span class="n">tab</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span> <span class="s">&quot;Plot&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         </div>
 <div class="viewcode-block" id="Q2DisplayWidget.changed_sb"><a class="viewcode-back" href="../../src.html#src.gui.Q2DisplayWidget.changed_sb">[docs]</a>    <span class="k">def</span> <span class="nf">changed_sb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_dynaminc_ui</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Q2DisplayWidget.autogen"><a class="viewcode-back" href="../../src.html#src.gui.Q2DisplayWidget.autogen">[docs]</a>    <span class="k">def</span> <span class="nf">autogen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;atom&quot;</span><span class="p">]:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">lvl</span><span class="p">,</span> <span class="n">i_lvl</span> <span class="ow">in</span> <span class="n">zipi</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">res</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot;(fock_dm(N, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_lvl</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;))&quot;</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lvl</span><span class="p">)])</span>
+        
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;vibron&quot;</span><span class="p">]:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">i_lvl</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">])):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">res</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot;(fock_dm(N, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_lvl</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;))&quot;</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_lvl</span><span class="p">)])</span>
+        
+        <span class="n">res</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">])</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">res</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">res</span>
     </div>
 <div class="viewcode-block" id="Q2DisplayWidget.parse"><a class="viewcode-back" href="../../src.html#src.gui.Q2DisplayWidget.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">pi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
@@ -396,10 +419,10 @@
         <span class="c">#=================== parse lasers ===================</span>
         <span class="n">cf</span><span class="p">[</span><span class="s">&quot;laser&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">laser_w</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">freq</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="n">phase</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">phase</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="n">pattern</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+            <span class="n">phase</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">phase</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
             <span class="n">cf</span><span class="p">[</span><span class="s">&quot;laser&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span>
                               <span class="p">,</span> <span class="n">freq</span>
                               <span class="p">,</span> <span class="n">phase</span>
@@ -408,9 +431,9 @@
         <span class="c">#=================== parse atoms ===================</span>
         <span class="n">cf</span><span class="p">[</span><span class="s">&quot;atom&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_w</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">levels</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">levels</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">levels</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">levels</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">),</span> <span class="s">&#39;dimension mismatch in &#39;</span> <span class="o">+</span> <span class="n">name</span>
             <span class="n">cf</span><span class="p">[</span><span class="s">&quot;atom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span>
                              <span class="p">,</span> <span class="n">levels</span>
@@ -419,9 +442,9 @@
         <span class="c">#=================== parse vibrons ===================</span>
         <span class="n">cf</span><span class="p">[</span><span class="s">&quot;vibron&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vibron_w</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">freq</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
             <span class="n">cf</span><span class="p">[</span><span class="s">&quot;vibron&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span>
                                <span class="p">,</span> <span class="n">freq</span>
                                <span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
@@ -433,7 +456,7 @@
         <span class="k">for</span> <span class="n">r_row</span><span class="p">,</span> <span class="n">r_row_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rabi_w</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rabi_w</span><span class="p">))):</span>
             <span class="n">temp</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">r_row</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r_row</span><span class="p">))):</span>
-                <span class="n">rabi</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+                <span class="n">rabi</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
                 <span class="n">n_lvl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cf</span><span class="p">[</span><span class="s">&quot;atom&quot;</span><span class="p">][</span><span class="n">r_i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
                 <span class="n">trans</span> <span class="o">=</span> <span class="n">n_lvl</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_lvl</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rabi</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -450,15 +473,32 @@
             <span class="n">cf</span><span class="p">[</span><span class="s">&quot;eta&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
         <span class="k">for</span> <span class="n">e_row</span><span class="p">,</span> <span class="n">e_row_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eta_w</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eta_w</span><span class="p">))):</span>
             <span class="k">for</span> <span class="n">e</span><span class="p">,</span> <span class="n">e_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e_row</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">e_row</span><span class="p">))):</span>
-                <span class="n">eta</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+                <span class="n">eta</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
                 <span class="n">cf</span><span class="p">[</span><span class="s">&quot;eta&quot;</span><span class="p">][</span><span class="n">e_i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span>
         
         <span class="c">#=================== parse integration ===================</span>
-        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;upper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">interval</span><span class="o">.</span><span class="n">text</span><span class="p">())[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;lower&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">interval</span><span class="o">.</span><span class="n">text</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;measure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">measure</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;cutoff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">cutoff</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;upper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">interval</span><span class="o">.</span><span class="n">text</span><span class="p">()))[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;lower&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">interval</span><span class="o">.</span><span class="n">text</span><span class="p">()))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;measure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">measure</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;cutoff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">cutoff</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
         
+        <span class="c">#=================== parse plot ===================</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">())</span>
+        
+        <span class="n">pl</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+        
+        <span class="n">new</span> <span class="o">=</span> <span class="p">[[]]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pl</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">new</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;; &quot;</span><span class="p">))</span>
+        
+        <span class="k">if</span> <span class="n">new</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        
+        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;plot&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span>
         <span class="k">return</span> <span class="n">cf</span>
     </div>
 <div class="viewcode-block" id="Q2DisplayWidget.save_parse"><a class="viewcode-back" href="../../src.html#src.gui.Q2DisplayWidget.save_parse">[docs]</a>    <span class="k">def</span> <span class="nf">save_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -466,10 +506,10 @@
         <span class="c">#=================== parse lasers ===================</span>
         <span class="n">cf</span><span class="p">[</span><span class="s">&quot;laser&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">laser_w</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">freq</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">phase</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">phase</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">pattern</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">phase</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">phase</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
             <span class="n">cf</span><span class="p">[</span><span class="s">&quot;laser&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span>
                               <span class="p">,</span> <span class="n">freq</span>
                               <span class="p">,</span> <span class="n">phase</span>
@@ -478,9 +518,9 @@
         <span class="c">#=================== parse atoms ===================</span>
         <span class="n">cf</span><span class="p">[</span><span class="s">&quot;atom&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_w</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">levels</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">levels</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">levels</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">levels</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
             <span class="n">cf</span><span class="p">[</span><span class="s">&quot;atom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span>
                              <span class="p">,</span> <span class="n">levels</span>
                              <span class="p">,</span> <span class="n">state</span>
@@ -488,9 +528,9 @@
         <span class="c">#=================== parse vibrons ===================</span>
         <span class="n">cf</span><span class="p">[</span><span class="s">&quot;vibron&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vibron_w</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">freq</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
             <span class="n">cf</span><span class="p">[</span><span class="s">&quot;vibron&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">name</span>
                                <span class="p">,</span> <span class="n">freq</span>
                                <span class="p">,</span> <span class="n">state</span>
@@ -501,7 +541,7 @@
         <span class="k">for</span> <span class="n">r_row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rabi_w</span><span class="p">:</span>
             <span class="n">temp</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">r_row</span><span class="p">:</span>
-                <span class="n">rabi</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+                <span class="n">rabi</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
                 <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rabi</span><span class="p">)</span>
             
             <span class="n">cf</span><span class="p">[</span><span class="s">&quot;rabi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
@@ -512,13 +552,16 @@
             <span class="n">cf</span><span class="p">[</span><span class="s">&quot;eta&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
         <span class="k">for</span> <span class="n">e_row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta_w</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">e</span><span class="p">,</span> <span class="n">e_i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e_row</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">e_row</span><span class="p">))):</span>
-                <span class="n">eta</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+                <span class="n">eta</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
                 <span class="n">cf</span><span class="p">[</span><span class="s">&quot;eta&quot;</span><span class="p">][</span><span class="n">e_i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span>
         
         <span class="c">#=================== parse integration ===================</span>
-        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;interval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">interval</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;measure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">measure</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;cutoff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">cutoff</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;interval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">interval</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;measure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">measure</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;cutoff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">cutoff</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        
+        <span class="c">#=================== parse plot ===================</span>
+        <span class="n">cf</span><span class="p">[</span><span class="s">&quot;plot&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">toPlainText</span><span class="p">())</span>
         
         <span class="k">return</span> <span class="n">cf</span>
         </div>
@@ -558,15 +601,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">interval</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">cf</span><span class="p">[</span><span class="s">&quot;interval&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">measure</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">cf</span><span class="p">[</span><span class="s">&quot;measure&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">itg_w</span><span class="o">.</span><span class="n">cutoff</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">cf</span><span class="p">[</span><span class="s">&quot;cutoff&quot;</span><span class="p">])</span>
+        
+        <span class="c">#=================== parse plot ===================</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">cf</span><span class="p">[</span><span class="s">&quot;plot&quot;</span><span class="p">])</span>
     </div>
 <div class="viewcode-block" id="Q2DisplayWidget.save"><a class="viewcode-back" href="../../src.html#src.gui.Q2DisplayWidget.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">print</span><span class="p">(</span><span class="s">&quot;save&quot;</span><span class="p">)</span>
         <span class="n">fileName</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;Open File&quot;</span><span class="p">,</span> <span class="s">&quot;~/&quot;</span><span class="p">,</span> <span class="s">&quot;Pickle Files (*.pickle)&quot;</span><span class="p">)</span>
-        <span class="n">file_name</span> <span class="o">=</span> <span class="n">fileName</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">qt_binding</span> <span class="o">==</span> <span class="s">&quot;PySide&quot;</span><span class="p">:</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">fileName</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+        
         <span class="k">if</span> <span class="n">file_name</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="n">fileName</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">fileName</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;*&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">file_name</span> <span class="o">+=</span> <span class="n">fileName</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;*&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            
+        <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;.pickle&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">file_name</span> <span class="o">+=</span> <span class="s">&quot;.pickle&quot;</span>
         
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_parse</span><span class="p">()</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
@@ -578,12 +629,14 @@
 <div class="viewcode-block" id="Q2DisplayWidget.load"><a class="viewcode-back" href="../../src.html#src.gui.Q2DisplayWidget.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">print</span><span class="p">(</span><span class="s">&quot;load&quot;</span><span class="p">)</span>
         <span class="n">fileName</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;Open File&quot;</span><span class="p">,</span> <span class="s">&quot;~/&quot;</span><span class="p">,</span> <span class="s">&quot;Pickle Files (*.pickle)&quot;</span><span class="p">)</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
-        <span class="n">file_name</span> <span class="o">=</span> <span class="n">fileName</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">qt_binding</span> <span class="o">==</span> <span class="s">&quot;PySide&quot;</span><span class="p">:</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">fileName</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+            
         <span class="k">if</span> <span class="n">file_name</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
             <span class="k">return</span>
-        
-        <span class="k">print</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+            
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -595,7 +648,8 @@
         
         <span class="n">canonical_form</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
         
-        <span class="n">integrate_cf_eff</span><span class="p">(</span><span class="n">canonical_form</span><span class="p">,</span> <span class="n">opt</span> <span class="o">=</span> <span class="s">&quot;event&quot;</span><span class="p">)</span>
+        <span class="n">times</span><span class="p">,</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">integrate_cf</span><span class="p">(</span><span class="n">canonical_form</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s">&quot;mesolve&quot;</span><span class="p">)</span>
+        <span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">canonical_form</span><span class="p">)</span>
     </div></div>
 <div class="viewcode-block" id="run_gui"><a class="viewcode-back" href="../../src.html#src.gui.run_gui">[docs]</a><span class="k">def</span> <span class="nf">run_gui</span><span class="p">():</span>
     <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
