@@ -13,46 +13,53 @@ p7
 aS'0'
 aS'[[0, sqrt(2)*pi]]'
 p8
-aasS'plot'
+aasS'collapse'
 p9
-S'atom1(fock_dm(N, 0)); atom1 0\natom1(fock_dm(N, 1)); atom1 100\natom1(fock_dm(N, 2)); atom1 200\n\nvib1(fock_dm(N, 0)); vib1 0\nvib1(fock_dm(N, 1)); vib1 1\n\nfidelity(atom1(fock_dm(N, 1)), state); FID'
+S'0.5*tensor(atom1(destroy(N)))'
 p10
-sS'interval'
+sS'plot'
 p11
-S'[0, 2*pi]'
+S'atom1(fock_dm(N, 0)); atom1 A\natom1(fock_dm(N, 1)); atom1 B\natom1(fock_dm(N, 2)); atom1 C\natom1(fock_dm(N, 2) + fock_dm(N, 1)); atom1 B + C'
 p12
-sS'measure'
+sS'interval'
 p13
-S'100'
+S'[0, 4*pi]'
 p14
-sS'vibron'
+sS'measure'
 p15
-(lp16
-(lp17
+S'100'
+p16
+sS'vibron'
+p17
+(lp18
+(lp19
 S'vib1'
-p18
-aS'10'
-p19
-aS'diag([1, 0])'
 p20
-aasS'eta'
+aS'10'
 p21
-(lp22
-(lp23
+aS'diag([1, 0])'
+p22
+aasS'eta'
+p23
+(lp24
+(lp25
 S'0'
 aasS'atom'
-p24
-(lp25
-(lp26
+p26
+(lp27
+(lp28
 S'atom1'
-p27
-aS'[0, 100, 200]'
-p28
-aS'diag([1, 0, 0])'
 p29
-aasS'rabi'
+aS'[0, 100, 200]'
 p30
-(lp31
-(lp32
+aS'diag([1, 0, 0])'
+p31
+aasS'rabi'
+p32
+(lp33
+(lp34
 S'1'
-aas.
+aasS'hbar'
+p35
+S'1'
+s.

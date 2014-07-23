@@ -53,92 +53,99 @@ p27
 aS'0'
 aS'[[101*pi, 102*pi]]'
 p28
-aasS'plot'
+aasS'collapse'
 p29
-S'atom1(fock_dm(N, 0)); atom1 0\natom1(fock_dm(N, 1)); atom1 100\natom1(fock_dm(N, 2)); atom1 300\natom1(fock_dm(N, 3)); atom1 700\n\natom2(fock_dm(N, 0)); atom2 0\natom2(fock_dm(N, 1)); atom2 100\natom2(fock_dm(N, 2)); atom2 300\natom2(fock_dm(N, 3)); atom2 700\n\nvib1(fock_dm(N, 0)); vib1 0\nvib1(fock_dm(N, 1)); vib1 1\nvib1(fock_dm(N, 2)); vib1 2\n\nvib2(fock_dm(N, 0)); vib2 0\nvib2(fock_dm(N, 1)); vib2 1\nvib2(fock_dm(N, 2)); vib2 2'
+S'atom1(destroy(N))'
 p30
-sS'interval'
+sS'plot'
 p31
-S'[0*pi, 202*pi]'
+S'atom1(fock_dm(N, 0)); atom1 0\natom1(fock_dm(N, 1)); atom1 100\natom1(fock_dm(N, 2)); atom1 300\natom1(fock_dm(N, 3)); atom1 700\n\natom2(fock_dm(N, 0)); atom2 0\natom2(fock_dm(N, 1)); atom2 100\natom2(fock_dm(N, 2)); atom2 300\natom2(fock_dm(N, 3)); atom2 700\n\nvib1(fock_dm(N, 0)); vib1 0\nvib1(fock_dm(N, 1)); vib1 1\nvib1(fock_dm(N, 2)); vib1 2\n\nvib2(fock_dm(N, 0)); vib2 0\nvib2(fock_dm(N, 1)); vib2 1\nvib2(fock_dm(N, 2)); vib2 2'
 p32
-sS'measure'
+sS'interval'
 p33
-S'1000'
+S'[0*pi, 202*pi]'
 p34
-sS'vibron'
+sS'measure'
 p35
-(lp36
-(lp37
+S'1000'
+p36
+sS'vibron'
+p37
+(lp38
+(lp39
 S'vib1'
-p38
-aS'10'
-p39
-aS'diag([0, 1, 0])'
 p40
-aa(lp41
-S'vib2'
-p42
-aS'20'
-p43
+aS'10'
+p41
 aS'diag([0, 1, 0])'
+p42
+aa(lp43
+S'vib2'
 p44
-aasS'eta'
+aS'20'
 p45
-(lp46
-(lp47
+aS'diag([0, 1, 0])'
+p46
+aasS'eta'
+p47
+(lp48
+(lp49
 S'.2'
-p48
+p50
 aS'.2'
-p49
-aa(lp50
-S'.2'
 p51
-aS'.2'
-p52
-aasS'atom'
+aa(lp52
+S'.2'
 p53
-(lp54
-(lp55
+aS'.2'
+p54
+aasS'atom'
+p55
+(lp56
+(lp57
 S'atom1'
-p56
-aS'[0, 100, 300, 700]'
-p57
-aS'diag([1, 0, 0, 0])'
 p58
-aa(lp59
-S'atom2'
-p60
 aS'[0, 100, 300, 700]'
-p61
+p59
 aS'diag([1, 0, 0, 0])'
+p60
+aa(lp61
+S'atom2'
 p62
-aasS'rabi'
+aS'[0, 100, 300, 700]'
 p63
-(lp64
-(lp65
+aS'diag([1, 0, 0, 0])'
+p64
+aasS'rabi'
+p65
+(lp66
+(lp67
 S'.5'
-p66
+p68
 aS'.5'
-p67
-aa(lp68
-S'.5'
 p69
-aS'.5'
-p70
-aa(lp71
+aa(lp70
 S'.5'
+p71
+aS'.5'
 p72
-aS'.5'
-p73
-aa(lp74
+aa(lp73
 S'.5'
-p75
+p74
 aS'.5'
-p76
-aa(lp77
+p75
+aa(lp76
+S'.5'
+p77
+aS'.5'
+p78
+aa(lp79
 S'0'
 aS'5'
-aa(lp78
+aa(lp80
 S'1'
 aS'0'
-aas.
+aasS'hbar'
+p81
+S'1'
+s.
