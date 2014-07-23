@@ -1,151 +1,144 @@
-(dp0
+(dp1
 S'cutoff'
-p1
-V5
 p2
+S'5'
 sS'laser'
 p3
 (lp4
 (lp5
-Vlaser1
+S'laser1'
 p6
-aV310+1
+aS'310+1'
 p7
-aV0
+aS'0'
+aS'[[0, 100*pi], [102*pi, 202*pi]]'
 p8
-aV[[0, 100*pi], [102*pi, 202*pi]]
-p9
-aa(lp10
-Vlaser2
+aa(lp9
+S'laser2'
+p10
+aS'290-1'
 p11
-aV290-1
+aS'0'
+aS'[[0, 100*pi], [102*pi, 202*pi]]'
 p12
-aV0
-p13
-aV[[0, 100*pi], [102*pi, 202*pi]]
+aa(lp13
+S'laser3'
 p14
-aa(lp15
-Vlaser3
+aS'620+1'
+p15
+aS'0'
+aS'[[0, 100*pi], [102*pi, 202*pi]]'
 p16
-aV620+1
-p17
-aV0
+aa(lp17
+S'laser4'
 p18
-aV[[0, 100*pi], [102*pi, 202*pi]]
+aS'580-1'
 p19
-aa(lp20
-Vlaser4
-p21
-aV580-1
+aS'0'
+aS'[[0, 100*pi], [102*pi, 202*pi]]'
+p20
+aa(lp21
+S'laser5'
 p22
-aV0
+aS'90'
 p23
-aV[[0, 100*pi], [102*pi, 202*pi]]
+aS'0'
+aS'[[100*pi, (100+1/sqrt(2))*pi]]'
 p24
 aa(lp25
-Vlaser5
+S'laser6'
 p26
-aV90
+aS'100'
 p27
-aV0
+aS'0'
+aS'[[101*pi, 102*pi]]'
 p28
-aV[[100*pi, (100+1/sqrt(2))*pi]]
+aasS'plot'
 p29
-aa(lp30
-Vlaser6
+S'atom1(fock_dm(N, 0)); atom1 0\natom1(fock_dm(N, 1)); atom1 100\natom1(fock_dm(N, 2)); atom1 300\natom1(fock_dm(N, 3)); atom1 700\n\natom2(fock_dm(N, 0)); atom2 0\natom2(fock_dm(N, 1)); atom2 100\natom2(fock_dm(N, 2)); atom2 300\natom2(fock_dm(N, 3)); atom2 700\n\nvib1(fock_dm(N, 0)); vib1 0\nvib1(fock_dm(N, 1)); vib1 1\nvib1(fock_dm(N, 2)); vib1 2\n\nvib2(fock_dm(N, 0)); vib2 0\nvib2(fock_dm(N, 1)); vib2 1\nvib2(fock_dm(N, 2)); vib2 2'
+p30
+sS'interval'
 p31
-aV100
+S'[0*pi, 202*pi]'
 p32
-aV0
-p33
-aV[[101*pi, 102*pi]]
-p34
-aasS'interval'
-p35
-V[0*pi, 202*pi]
-p36
 sS'measure'
-p37
-V1000
-p38
+p33
+S'1000'
+p34
 sS'vibron'
+p35
+(lp36
+(lp37
+S'vib1'
+p38
+aS'10'
 p39
-(lp40
-(lp41
-Vvib1
+aS'diag([0, 1, 0])'
+p40
+aa(lp41
+S'vib2'
 p42
-aV10
+aS'20'
 p43
-aVdiag([0, 1, 0])
+aS'diag([0, 1, 0])'
 p44
-aa(lp45
-Vvib2
-p46
-aV20
-p47
-aVdiag([0, 1, 0])
-p48
 aasS'eta'
+p45
+(lp46
+(lp47
+S'.2'
+p48
+aS'.2'
 p49
-(lp50
-(lp51
-V.2
+aa(lp50
+S'.2'
+p51
+aS'.2'
 p52
-aV.2
-p53
-aa(lp54
-V.2
-p55
-aV.2
-p56
 aasS'atom'
+p53
+(lp54
+(lp55
+S'atom1'
+p56
+aS'[0, 100, 300, 700]'
 p57
-(lp58
-(lp59
-Vatom1
+aS'diag([1, 0, 0, 0])'
+p58
+aa(lp59
+S'atom2'
 p60
-aV[0, 100, 300, 700]
+aS'[0, 100, 300, 700]'
 p61
-aVdiag([1, 0, 0, 0])
+aS'diag([1, 0, 0, 0])'
 p62
-aa(lp63
-Vatom2
-p64
-aV[0, 100, 300, 700]
-p65
-aVdiag([1, 0, 0, 0])
-p66
 aasS'rabi'
+p63
+(lp64
+(lp65
+S'.5'
+p66
+aS'.5'
 p67
-(lp68
-(lp69
-V.5
+aa(lp68
+S'.5'
+p69
+aS'.5'
 p70
-aV.5
-p71
-aa(lp72
-V.5
+aa(lp71
+S'.5'
+p72
+aS'.5'
 p73
-aV.5
-p74
-aa(lp75
-V.5
+aa(lp74
+S'.5'
+p75
+aS'.5'
 p76
-aV.5
-p77
+aa(lp77
+S'0'
+aS'5'
 aa(lp78
-V.5
-p79
-aV.5
-p80
-aa(lp81
-V0
-p82
-aV5
-p83
-aa(lp84
-V1
-p85
-aV0
-p86
+S'1'
+aS'0'
 aas.

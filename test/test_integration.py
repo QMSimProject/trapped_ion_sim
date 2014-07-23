@@ -11,7 +11,7 @@ if __name__ == "__main__":
     cf = {}
     
     cf["atom"] = []
-    cf["atom"].append(["Ca", [0, 100], np.diag([1, 0])])
+    cf["atom"].append(["atom1", [0, 100], np.diag([1, 0])])
     cf["atom"].append(["atom2", [0, 100], np.diag([1, 0])])
     
     cf["vibron"] = []
@@ -28,10 +28,9 @@ if __name__ == "__main__":
     cf["upper"] = 100 * np.pi
     cf["measure"] = 1000
     cf["cutoff"] = 5
-    cf["plot"] = [["atom1(dest)", "atom1(fock_dm(2, 1))"], ["atom2(fock_dm(2, 0))", "atom2(fock_dm(2, 1))"], ["vib1(fock_dm(3, 0))", "vib1(fock_dm(3, 1))", "vib1(fock_dm(3, 2))"]]
+    cf["plot"] = [[["atom1(fock_dm(N, 0))", "GS1"], ["fidelity(atom2(fock_dm(N, 1)), state)", "FID"]], [["atom2(fock_dm(N, 0))", "GS2"], ["atom2(fock_dm(N, 1))", "ES2"]], [["vib1(fock_dm(N, 0))", "V0"], ["vib1(fock_dm(N, 1))", "V1"], ["vib1(fock_dm(N, 2))", "V2"]], [["laser1(.5)", "laser1"]]]
     
-    #~ , ["fidelity(tensor(atom2(fock_dm(2, 0)), atom1(fock_dm(2, 0))), state)"], ["laser1"]
+    cf["collaps"] = []
     
-    #~ integrate_cf(cf) #old method
-    t, e = integrate_cf_eff(cf)
+    t, e = integrate_cf(cf)
     plot(t, e, cf)

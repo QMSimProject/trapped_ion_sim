@@ -9,4 +9,5 @@
 import qutip as q
 import pylab as pl
 import numpy as np
+import copy
 import cPickle as pickle
