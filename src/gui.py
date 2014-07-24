@@ -11,7 +11,6 @@ from .plot import plot
 
 from src_import import *
 
-
 class Q2LaserWidget(QWidget):
     __laser_counter = 0
     def __init__(self, parent = None):
@@ -370,9 +369,7 @@ class Q2DisplayWidget(QMainWindow):
         return res
     
     def parse(self):
-        pi = np.pi
-        diag = np.diag
-        sqrt = np.sqrt
+        from useable_fct import *
         
         cf = {}
         #=================== parse lasers ===================
@@ -393,6 +390,8 @@ class Q2DisplayWidget(QMainWindow):
             name = str(a.name.text())
             levels = eval(str(a.levels.text()))
             state = eval(str(a.state.text()))
+            if isinstance(state, q.Qobj):
+                state = state.data.todense()
             assert len(state) == len(levels), 'dimension mismatch in ' + name
             cf["atom"].append([name
                              , levels
@@ -404,6 +403,8 @@ class Q2DisplayWidget(QMainWindow):
             name = str(v.name.text())
             freq = eval(str(v.freq.text()))
             state = eval(str(v.state.text()))
+            if isinstance(state, q.Qobj):
+                state = state.data.todense()
             cf["vibron"].append([name
                                , freq
                                , len(state)

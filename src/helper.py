@@ -8,6 +8,7 @@
 from .src_import import *
 from .atom_class import *
 from .vibron_class import *
+from .useable_fct import *
 
 #=================== helper ===================
 def hold_args(names, expr):
@@ -45,6 +46,7 @@ def hold_args(names, expr):
     
     return expr
 
+
 class tag_class():
     all_sys = []
     def __init__ (self, name, idx, offset = 0):
@@ -55,15 +57,9 @@ class tag_class():
     def __int__(self):
         return self.idx + self.off
     def __call__(self, op):
-        from qutip import fock_dm
-        from qutip import coherent_dm
-        from qutip import thermal_dm
-        from qutip import squeeze
-        from qutip import destroy
-        from qutip import create
-        from qutip import sigmax
-        from qutip import sigmay
-        from qutip import sigmaz
+        if op == '':
+            op = "0"
+        
         N = self.N
         return [self.idx + self.off, eval(op)]
 

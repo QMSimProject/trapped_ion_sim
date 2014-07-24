@@ -9,7 +9,7 @@ from .src_import import *
 from .atom_class import *
 from .vibron_class import *
 from .laser_class import *
-from .helper import *
+from .helper import hold_args, tag_class, tensor
 
 #=================== global variables ===================
 default_cutoff = 100000
@@ -366,6 +366,8 @@ def integrate_cf(cf, **kwargs):
     
     if not callback:
         res.times, res.expect = collect_times(*col_res), collect_expect(*col_res)
+    else:
+        res.times = res.times[:-1] #small fix
     
     for l in laser_ops:
         l_res = np.zeros(len(res.times))
@@ -373,7 +375,7 @@ def integrate_cf(cf, **kwargs):
             l_res[i_t] = l[0](t)
         res.expect.insert(l[1], l_res)
     
-    for exp in res.expect: #small fix
-        exp = exp[:len(res.times)]
+    for i in range(len(res.expect)): #small fix
+        res.expect[i] = res.expect[i][:len(res.times)]
     
     return res.times, res.expect
