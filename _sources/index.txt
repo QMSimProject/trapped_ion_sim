@@ -8,6 +8,13 @@ Welcome to Trapped Ion Sim's documentation!
 
 Contents:
 
+Python 2.7:
+https://docs.python.org/2/
+
+QuTip 3.0:
+http://qutip.org/
+http://qutip.org/docs/3.0.0/index.html
+
 .. toctree::
    :maxdepth: 2
 
