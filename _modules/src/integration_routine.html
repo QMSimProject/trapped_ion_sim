@@ -223,7 +223,7 @@
     
     <span class="n">H</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">col_args</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">col_args</span><span class="p">[</span><span class="s">&quot;hb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;hbar&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">col_args</span><span class="p">[</span><span class="s">&quot;hb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;hbar&quot;</span><span class="p">]</span>
     
     <span class="n">rwa_takes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
     
@@ -333,7 +333,7 @@
     <span class="n">rabi</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;rabi&quot;</span><span class="p">]</span> <span class="c">#matrix</span>
     <span class="n">eta</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;eta&quot;</span><span class="p">]</span> <span class="c">#matrix</span>
     
-    <span class="n">H</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">create_hamiltonian</span><span class="p">(</span><span class="n">at</span><span class="p">,</span> <span class="n">vb</span><span class="p">,</span> <span class="n">ls</span><span class="p">,</span> <span class="n">rabi</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;cutoff&quot;</span><span class="p">],</span> <span class="n">hb</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;hbar&quot;</span><span class="p">])</span>
+    <span class="n">H</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">create_hamiltonian</span><span class="p">(</span><span class="n">at</span><span class="p">,</span> <span class="n">vb</span><span class="p">,</span> <span class="n">ls</span><span class="p">,</span> <span class="n">rabi</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;cutoff&quot;</span><span class="p">],</span> <span class="n">hbar</span> <span class="o">=</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;hbar&quot;</span><span class="p">])</span>
     
     <span class="c">#------------------- set up event structure ------------------- </span>
     <span class="n">act</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -393,7 +393,6 @@
     <span class="c">#=================== event integration ===================</span>
     <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">col_event</span><span class="p">:</span>
         <span class="n">tlist_event</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
-        
         <span class="n">h_idx</span> <span class="o">=</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">H_event</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i_h</span> <span class="ow">in</span> <span class="n">h_idx</span><span class="p">:</span>
@@ -415,14 +414,15 @@
     
     <span class="k">if</span> <span class="ow">not</span> <span class="n">callback</span><span class="p">:</span>
         <span class="n">res</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">expect</span> <span class="o">=</span> <span class="n">collect_times</span><span class="p">(</span><span class="o">*</span><span class="n">col_res</span><span class="p">),</span> <span class="n">collect_expect</span><span class="p">(</span><span class="o">*</span><span class="n">col_res</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">res</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">times</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c">#small fix</span>
     
     <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">laser_ops</span><span class="p">:</span>
         <span class="n">l_res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">times</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">i_t</span> <span class="ow">in</span> <span class="n">zipi</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">times</span><span class="p">):</span>
             <span class="n">l_res</span><span class="p">[</span><span class="n">i_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">t</span><span class="p">)</span>
         <span class="n">res</span><span class="o">.</span><span class="n">expect</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">l_res</span><span class="p">)</span>
+    
+    <span class="k">while</span> <span class="n">res</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">times</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">expect</span><span class="p">)):</span> <span class="c">#small fix</span>
         <span class="n">res</span><span class="o">.</span><span class="n">expect</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">expect</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">times</span><span class="p">)]</span>
