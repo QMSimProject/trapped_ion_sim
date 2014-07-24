@@ -9,10 +9,9 @@ from qutip import *
 from pylab import *
 
 def run_example():
-    
     # we have a spin 1/2 system that is in the up state
-    # psi can either be a a vector or a density matrix
-    psi = fock_dm(2, 0) #dimensions / state
+    # can either be a a vector or a density matrix
+    rho = fock_dm(2, 0) #dimensions / state
 
     # a time independent Hamiltonian can just be given a an operator
     H = [sigmay()]
@@ -27,7 +26,7 @@ def run_example():
     tlist = linspace(0, 3*pi, 201)
     
     # the integration (uses ode45)
-    res = mesolve(H, psi, tlist, col, obs)
+    res = mesolve(H, rho, tlist, col, obs)
     
     # get the measured values of the observables
     exp = res.expect

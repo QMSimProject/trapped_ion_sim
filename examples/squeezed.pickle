@@ -1,0 +1,78 @@
+(dp1
+S'cutoff'
+p2
+S'5'
+sS'laser'
+p3
+(lp4
+(lp5
+S'laser1'
+p6
+aS'4.115e14-2*pi*1.83e6'
+p7
+aS'0'
+aS'[[0, 2*pi]]'
+p8
+aa(lp9
+S'laser2'
+p10
+aS'4.115e14+2*pi*1.83e6'
+p11
+aS'0'
+aS'[[0, 2*pi]]'
+p12
+aasS'collapse'
+p13
+S'1 * tensor(atom1(destroy(N)))'
+p14
+sS'plot'
+p15
+S'atom1(fock_dm(N, 0)); atom1 0\natom1(fock_dm(N, 1)); atom1 100\n\nfidelity(vib1((squeeze(N, 1)*basis(N, 0))*(squeeze(N, 1)*basis(N, 0)).dag()), state); Fid'
+p16
+sS'interval'
+p17
+S'[0, 0.004]'
+p18
+sS'measure'
+p19
+S'100'
+p20
+sS'vibron'
+p21
+(lp22
+(lp23
+S'vib1'
+p24
+aS'2*pi*1.83e6'
+p25
+aS'fock_dm(10, 0)'
+p26
+aasS'eta'
+p27
+(lp28
+(lp29
+S'0.05'
+p30
+aasS'atom'
+p31
+(lp32
+(lp33
+S'atom1'
+p34
+aS'[0, 4.115e14]'
+p35
+aS'fock_dm(2, 1)'
+p36
+aasS'rabi'
+p37
+(lp38
+(lp39
+S'pi / 25e-6'
+p40
+aa(lp41
+S'pi/25e-6*0.7616'
+p42
+aasS'hbar'
+p43
+S'1'
+s.

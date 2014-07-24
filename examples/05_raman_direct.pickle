@@ -9,18 +9,18 @@ p4
 (lp6
 S'laser1'
 p7
-aS'1000+1'
+aS'1000'
 p8
 aS'0'
-aS'[[10, 110*pi]]'
+aS'[[1*pi, 2*pi]]'
 p9
 aa(lp10
 S'laser2'
 p11
-aS'900+1'
+aS'900'
 p12
 aS'0'
-aS'[[10, 110*pi]]'
+aS'[[1*pi, 2*pi]]'
 p13
 aasS'collapse'
 p14
@@ -31,7 +31,7 @@ S'atom1(fock_dm(N, 0)); atom1 0\natom1(fock_dm(N, 1)); atom1 100\natom1(fock_dm(
 p16
 sS'interval'
 p17
-S'[0, 120*pi]'
+S'[0, 3*pi]'
 p18
 sS'measure'
 p19
@@ -58,10 +58,10 @@ aasS'rabi'
 p32
 (lp33
 (lp34
-S'.1*sqrt(2)'
+S'sqrt(2)'
 p35
 aa(lp36
-S'.1*sqrt(2)'
+S'sqrt(2)'
 p37
 aasS'hbar'
 p38

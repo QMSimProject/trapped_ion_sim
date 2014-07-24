@@ -174,7 +174,7 @@ def create_hamiltonian(atoms, vibrons, lasers, _rabi, _eta, **kwargs):
     
     H = []
     col_args = {}
-    col_args["hb"] = kwargs.get("hbar", 1)
+    col_args["hb"] = kwargs["hbar"]
     
     rwa_takes = [0, 0]
     
@@ -284,7 +284,7 @@ def integrate_cf(cf, **kwargs):
     rabi = cf["rabi"] #matrix
     eta = cf["eta"] #matrix
     
-    H, args = create_hamiltonian(at, vb, ls, rabi, eta, cutoff = cf["cutoff"], hb = cf["hbar"])
+    H, args = create_hamiltonian(at, vb, ls, rabi, eta, cutoff = cf["cutoff"], hbar = cf["hbar"])
     
     #------------------- set up event structure ------------------- 
     act = set()
@@ -344,7 +344,6 @@ def integrate_cf(cf, **kwargs):
     #=================== event integration ===================
     for e in col_event:
         tlist_event = np.linspace(e[0][0], e[0][1], e[0][2])
-        
         h_idx = e[1]
         H_event = []
         for i_h in h_idx:
@@ -366,14 +365,15 @@ def integrate_cf(cf, **kwargs):
     
     if not callback:
         res.times, res.expect = collect_times(*col_res), collect_expect(*col_res)
-    else:
-        res.times = res.times[:-1] #small fix
     
     for l in laser_ops:
         l_res = np.zeros(len(res.times))
         for t, i_t in zipi(res.times):
             l_res[i_t] = l[0](t)
         res.expect.insert(l[1], l_res)
+    
+    while res.times[-1] == 0:
+        res.times = res.times[:-1]
     
     for i in range(len(res.expect)): #small fix
         res.expect[i] = res.expect[i][:len(res.times)]
