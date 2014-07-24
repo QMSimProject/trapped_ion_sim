@@ -1,0 +1,57 @@
+(dp1
+S'cutoff'
+p2
+S'5'
+sS'laser'
+p3
+(lp4
+(lp5
+S'laser1'
+p6
+aS'100'
+p7
+aS'0'
+aS'[[1*pi, 2*pi]]'
+p8
+aasS'collapse'
+p9
+S'0.3*tensor(atom1(destroy(N)))'
+p10
+sS'plot'
+p11
+S'atom1(fock_dm(N, 0)); atom1 0\natom1(fock_dm(N, 1)); atom1 100\nlaser1(.2); laser\n\nfidelity(atom1(fock_dm(N, 1)), state); Fidelity ES'
+p12
+sS'interval'
+p13
+S'[0, 10*pi]'
+p14
+sS'measure'
+p15
+S'200'
+p16
+sS'vibron'
+p17
+(lp18
+sS'eta'
+p19
+(lp20
+(lp21
+asS'atom'
+p22
+(lp23
+(lp24
+S'atom1'
+p25
+aS'[0, 100]'
+p26
+aS'fock_dm(2, 0)'
+p27
+aasS'rabi'
+p28
+(lp29
+(lp30
+S'1'
+aasS'hbar'
+p31
+S'1'
+s.

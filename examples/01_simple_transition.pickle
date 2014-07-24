@@ -1,0 +1,56 @@
+(dp1
+S'cutoff'
+p2
+S'5'
+sS'laser'
+p3
+(lp4
+(lp5
+S'laser1'
+p6
+aS'100'
+p7
+aS'0'
+aS'[[1*pi, 2*pi]]'
+p8
+aasS'collapse'
+p9
+S''
+sS'plot'
+p10
+S'atom1(fock_dm(N, 0)); atom1 0\natom1(fock_dm(N, 1)); atom1 100\nlaser1(.2); laser'
+p11
+sS'interval'
+p12
+S'[0, 3*pi]'
+p13
+sS'measure'
+p14
+S'200'
+p15
+sS'vibron'
+p16
+(lp17
+sS'eta'
+p18
+(lp19
+(lp20
+asS'atom'
+p21
+(lp22
+(lp23
+S'atom1'
+p24
+aS'[0, 100]'
+p25
+aS'fock_dm(2, 0)'
+p26
+aasS'rabi'
+p27
+(lp28
+(lp29
+S'1'
+aasS'hbar'
+p30
+S'1'
+s.

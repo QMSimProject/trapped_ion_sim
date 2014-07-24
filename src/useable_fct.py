@@ -15,6 +15,7 @@ from qutip import sigmax
 from qutip import sigmay
 from qutip import sigmaz
 from qutip import qeye
+from qutip import basis
 from qutip import num
 from numpy import pi
 from numpy import diag
