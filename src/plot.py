@@ -66,6 +66,16 @@ def create_labels(cf):
     return lbl, col
 
 def plot(times, exp, cf):
+    """
+    plots the data
+    
+    just specifies the color and linestyle of the plots and extracts the propper names from the cf
+    
+    :param times: time points measured: list[#measurements]
+    :param exp: for each observed/measured property this list contains a list with the results, list[#obs][#measurements]
+    :param cf: canonical form of the integration problem. especially the key "plot" contains the information what obs are plotted together and which need an own subplot
+    :returns: None
+    """
     #=================== plot ===================
     
     lbl, col = create_labels(cf)
