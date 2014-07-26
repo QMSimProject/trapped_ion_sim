@@ -59,14 +59,23 @@
 
 <span class="c">#------------------- helper ------------------- </span>
 <div class="viewcode-block" id="readable"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.readable">[docs]</a><span class="k">def</span> <span class="nf">readable</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if a file called name is readable. Uses os.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">)</span>
 
 <span class="c">#------------------- zip with index  ------------------- </span></div>
 <div class="viewcode-block" id="zipi"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.zipi">[docs]</a><span class="k">def</span> <span class="nf">zipi</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shorthand for zip(list, range(len(list))), if one needs the index and the content of a list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)))</span>
 
 <span class="c">#------------------- converter ------------------- </span></div>
 <div class="viewcode-block" id="to_number"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.to_number">[docs]</a><span class="k">def</span> <span class="nf">to_number</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tries to convert the input string into an int, if that doesn&#39;t work into a float and if that also fails, returns the string again.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
@@ -81,19 +90,34 @@
 
 <span class="c">#------------------- type checks ------------------- </span></div>
 <div class="viewcode-block" id="is_list"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.is_list">[docs]</a><span class="k">def</span> <span class="nf">is_list</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if the obj is a list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="is_int"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.is_int">[docs]</a><span class="k">def</span> <span class="nf">is_int</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if the obj is an int.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="is_float"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.is_float">[docs]</a><span class="k">def</span> <span class="nf">is_float</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if the obj is a float.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="is_number"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.is_number">[docs]</a><span class="k">def</span> <span class="nf">is_number</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if the obj is an int or a float.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">is_int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_float</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
 <span class="c">#------------------- depth of a list ------------------- </span></div>
 <div class="viewcode-block" id="depth"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.depth">[docs]</a><span class="k">def</span> <span class="nf">depth</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retruns the maximal depth of a nested list system. Is recursive and searches the whole &quot;tree&quot;, might be slow.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">is_list</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
         <span class="n">subdepth</span> <span class="o">=</span> <span class="p">[</span><span class="n">depth</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">subdepth</span> <span class="o">==</span> <span class="p">[]:</span>
@@ -105,14 +129,31 @@
 
 <span class="c">#------------------- ranges ------------------- </span></div>
 <div class="viewcode-block" id="drange"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.drange">[docs]</a><span class="k">def</span> <span class="nf">drange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a range of floating point numbers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">step</span> <span class="o">*</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="o">/</span><span class="n">step</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">end</span><span class="o">/</span><span class="n">step</span><span class="p">))]</span>
 
 <span class="c">#------------------- debug / error ------------------- </span></div>
 <div class="viewcode-block" id="ERROR"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.ERROR">[docs]</a><span class="k">def</span> <span class="nf">ERROR</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raises an exception and outputs text in red color.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;{0}error: {1}{2}{3}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">REDB_</span><span class="p">,</span> <span class="n">RED_</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">NONE_</span><span class="p">))</span>
 </div>
 <div class="viewcode-block" id="WARNING"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.WARNING">[docs]</a><span class="k">def</span> <span class="nf">WARNING</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">&quot;{0}warning: {1}{2}{3}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">YELLOWB_</span><span class="p">,</span> <span class="n">YELLOW_</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">NONE_</span><span class="p">))</span></div>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Just prints the text in yellow as a warning.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;{0}warning: {1}{2}{3}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">YELLOWB_</span><span class="p">,</span> <span class="n">YELLOW_</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">NONE_</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="ASSERT"><a class="viewcode-back" href="../../../src.addon.html#src.addon.helper.ASSERT">[docs]</a><span class="k">def</span> <span class="nf">ASSERT</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">text</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Will output the text in red color before calling pythons assert if the condition is not True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cond</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;{0}assert failed: {1}{2}{3}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">REDB_</span><span class="p">,</span> <span class="n">RED_</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">NONE_</span><span class="p">))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

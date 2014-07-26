@@ -58,7 +58,10 @@
 
 <span class="c">#------------------- progress ------------------- </span>
 <div class="viewcode-block" id="progress_bar"><a class="viewcode-back" href="../../../src.addon.html#src.addon.optical.progress_bar">[docs]</a><span class="k">def</span> <span class="nf">progress_bar</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="n">size</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    p is a number between 0 and 1 and progress_bar will return a string that contains a progress bar representing that progress.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="mi">50</span>
     
     <span class="n">bars</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">size</span><span class="p">);</span>
     <span class="n">bar</span> <span class="o">=</span> <span class="s">&quot;&lt;&quot;</span>

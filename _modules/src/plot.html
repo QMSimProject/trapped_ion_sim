@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.plot &mdash; Trapped Ion Sim  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Trapped Ion Sim  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for src.plot</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python2.7</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># </span>
+<span class="c"># Author:  Mario S. Könz &lt;mskoenz@gmx.net&gt;</span>
+<span class="c"># Date:    23.07.2014 23:39:41 CEST</span>
+<span class="c"># File:    plot.py</span>
+
+<span class="kn">from</span> <span class="nn">.src_import</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="create_labels"><a class="viewcode-back" href="../../src.html#src.plot.create_labels">[docs]</a><span class="k">def</span> <span class="nf">create_labels</span><span class="p">(</span><span class="n">cf</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    helper function for :func:`plot`</span>
+<span class="sd">    </span>
+<span class="sd">    just specifies the color and linestyle of the plots and extracts the propper names from the cf</span>
+<span class="sd">    </span>
+<span class="sd">    :param cf: canonical form of the integration problem</span>
+<span class="sd">    :returns: the label as well as color list for plotting</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flatten</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+    
+    <span class="n">lbl</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;b-&quot;</span><span class="p">,</span> <span class="s">&quot;g-&quot;</span><span class="p">,</span> <span class="s">&quot;c-&quot;</span><span class="p">,</span> <span class="s">&quot;m-&quot;</span><span class="p">,</span> <span class="s">&quot;r-&quot;</span><span class="p">,</span> <span class="s">&quot;y-&quot;</span><span class="p">,</span> <span class="s">&quot;b:&quot;</span><span class="p">,</span> <span class="s">&quot;g:&quot;</span><span class="p">,</span> <span class="s">&quot;c:&quot;</span><span class="p">,</span> <span class="s">&quot;m:&quot;</span><span class="p">,</span> <span class="s">&quot;r:&quot;</span><span class="p">,</span> <span class="s">&quot;y:&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">subplot</span> <span class="ow">in</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;plot&quot;</span><span class="p">]:</span>
+        <span class="n">lbl</span> <span class="o">+=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">subplot</span><span class="p">]</span>
+        <span class="n">col</span> <span class="o">+=</span> <span class="n">color</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">subplot</span><span class="p">)]</span>
+    
+    <span class="c">#~ &#39;-&#39; 	solid line style</span>
+    <span class="c">#~ &#39;--&#39;	dashed line style</span>
+    <span class="c">#~ &#39;-.&#39;	dash-dot line style</span>
+    <span class="c">#~ &#39;:&#39; 	dotted line style</span>
+    <span class="c">#~ &#39;.&#39; 	point marker</span>
+    <span class="c">#~ &#39;,&#39; 	pixel marker</span>
+    <span class="c">#~ &#39;o&#39; 	circle marker</span>
+    <span class="c">#~ &#39;v&#39; 	triangle_down marker</span>
+    <span class="c">#~ &#39;^&#39; 	triangle_up marker</span>
+    <span class="c">#~ &#39;&lt;&#39; 	triangle_left marker</span>
+    <span class="c">#~ &#39;&gt;&#39; 	triangle_right marker</span>
+    <span class="c">#~ &#39;1&#39; 	tri_down marker</span>
+    <span class="c">#~ &#39;2&#39; 	tri_up marker</span>
+    <span class="c">#~ &#39;3&#39; 	tri_left marker</span>
+    <span class="c">#~ &#39;4&#39; 	tri_right marker</span>
+    <span class="c">#~ &#39;s&#39; 	square marker</span>
+    <span class="c">#~ &#39;p&#39; 	pentagon marker</span>
+    <span class="c">#~ &#39;*&#39; 	star marker</span>
+    <span class="c">#~ &#39;h&#39; 	hexagon1 marker</span>
+    <span class="c">#~ &#39;H&#39; 	hexagon2 marker</span>
+    <span class="c">#~ &#39;+&#39; 	plus marker</span>
+    <span class="c">#~ &#39;x&#39; 	x marker</span>
+    <span class="c">#~ &#39;D&#39; 	diamond marker</span>
+    <span class="c">#~ &#39;d&#39; 	thin_diamond marker</span>
+    <span class="c">#~ &#39;|&#39; 	vline marker</span>
+    <span class="c">#~ &#39;_&#39; 	hline marker</span>
+    <span class="c">#~ </span>
+    <span class="c">#~ The following color abbreviations are supported:</span>
+    <span class="c">#~ character 	color</span>
+    <span class="c">#~ ‘b’ 	blue</span>
+    <span class="c">#~ ‘g’ 	green</span>
+    <span class="c">#~ ‘r’ 	red</span>
+    <span class="c">#~ ‘c’ 	cyan</span>
+    <span class="c">#~ ‘m’ 	magenta</span>
+    <span class="c">#~ ‘y’ 	yellow</span>
+    <span class="c">#~ ‘k’ 	black</span>
+    <span class="c">#~ ‘w’ 	white</span>
+    <span class="k">return</span> <span class="n">lbl</span><span class="p">,</span> <span class="n">col</span>
+</div>
+<div class="viewcode-block" id="plot"><a class="viewcode-back" href="../../src.html#src.plot.plot">[docs]</a><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">cf</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plots the data</span>
+<span class="sd">    </span>
+<span class="sd">    just specifies the color and linestyle of the plots and extracts the propper names from the cf</span>
+<span class="sd">    </span>
+<span class="sd">    :param times: time points measured: list[#measurements]</span>
+<span class="sd">    :param exp: for each observed/measured property this list contains a list with the results, list[#obs][#measurements]</span>
+<span class="sd">    :param cf: canonical form of the integration problem. especially the key &quot;plot&quot; contains the information what obs are plotted together and which need an own subplot</span>
+<span class="sd">    :returns: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#=================== plot ===================</span>
+    
+    <span class="n">lbl</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">create_labels</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span>
+    
+    
+    <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cf</span><span class="p">[</span><span class="s">&quot;plot&quot;</span><span class="p">]]</span>
+    
+    <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">))</span>
+    
+    <span class="n">cur</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Time&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;exp val&quot;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">exp</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">ex</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">cur</span> <span class="o">+</span> <span class="n">dims</span><span class="p">[</span><span class="n">idx</span><span class="p">]):</span>
+            <span class="n">cur</span> <span class="o">+=</span> <span class="n">dims</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+        
+        <span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">exp</span><span class="p">[</span><span class="n">ex</span><span class="p">],</span> <span class="n">col</span><span class="p">[</span><span class="n">ex</span><span class="p">])</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">lbl</span><span class="p">[</span><span class="n">cur</span><span class="p">:(</span><span class="n">cur</span> <span class="o">+</span> <span class="n">dims</span><span class="p">[</span><span class="n">idx</span><span class="p">])],</span> <span class="n">loc</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="o">-</span><span class="mf">0.005</span><span class="p">,</span> <span class="mf">1.005</span><span class="p">])</span>
+        
+    <span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Mario S. Koenz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

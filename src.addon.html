@@ -187,57 +187,74 @@
 <dl class="function">
 <dt id="src.addon.helper.readable">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">readable</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#readable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.readable" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Checks if a file called name is readable. Uses os.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.helper.zipi">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">zipi</tt><big>(</big><em>l</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#zipi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.zipi" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Shorthand for zip(list, range(len(list))), if one needs the index and the content of a list.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.helper.to_number">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">to_number</tt><big>(</big><em>string</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#to_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.to_number" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Tries to convert the input string into an int, if that doesn&#8217;t work into a float and if that also fails, returns the string again.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.helper.is_list">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">is_list</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#is_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.is_list" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Checks if the obj is a list.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.helper.is_int">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">is_int</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#is_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.is_int" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Checks if the obj is an int.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.helper.is_float">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">is_float</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#is_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.is_float" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Checks if the obj is a float.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.helper.is_number">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">is_number</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#is_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.is_number" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Checks if the obj is an int or a float.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.helper.depth">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">depth</tt><big>(</big><em>l</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#depth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.depth" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Retruns the maximal depth of a nested list system. Is recursive and searches the whole &#8220;tree&#8221;, might be slow.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.helper.drange">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">drange</tt><big>(</big><em>start</em>, <em>end</em>, <em>step</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#drange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.drange" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns a range of floating point numbers.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.helper.ERROR">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">ERROR</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#ERROR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.ERROR" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Raises an exception and outputs text in red color.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.helper.WARNING">
 <tt class="descclassname">src.addon.helper.</tt><tt class="descname">WARNING</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#WARNING"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.WARNING" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Just prints the text in yellow as a warning.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.addon.helper.ASSERT">
+<tt class="descclassname">src.addon.helper.</tt><tt class="descname">ASSERT</tt><big>(</big><em>cond</em>, <em>text=''</em><big>)</big><a class="reference internal" href="_modules/src/addon/helper.html#ASSERT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.helper.ASSERT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will output the text in red color before calling pythons assert if the condition is not True.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-src.addon.optical">
@@ -245,7 +262,8 @@
 <dl class="function">
 <dt id="src.addon.optical.progress_bar">
 <tt class="descclassname">src.addon.optical.</tt><tt class="descname">progress_bar</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="_modules/src/addon/optical.html#progress_bar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.optical.progress_bar" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>p is a number between 0 and 1 and progress_bar will return a string that contains a progress bar representing that progress.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-src.addon.parameter">
@@ -254,52 +272,74 @@
 <dt id="src.addon.parameter.parameter_class">
 <em class="property">class </em><tt class="descclassname">src.addon.parameter.</tt><tt class="descname">parameter_class</tt><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></p>
+<p>An useful class to parse argv. Is derived from dict.</p>
 <dl class="method">
 <dt id="src.addon.parameter.parameter_class.__init__">
 <tt class="descname">__init__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Initializes the class. Do not used self.reserved_names as keys for the dict. It will raise an error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.addon.parameter.parameter_class.warn">
+<tt class="descname">warn</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.warn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.warn" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the key &#8220;<a href="#id1"><span class="problematic" id="id2">warn_</span></a>&#8221; is True, the user will be warned if a key is overwritten or a flag set a second time.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="src.addon.parameter.parameter_class.read">
 <tt class="descname">read</tt><big>(</big><em>argv</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.read" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The passed argv is parsed and stored in the right places. Legal notation is:</p>
+<ul class="simple">
+<li>-flag</li>
+<li>-param value</li>
+<li>param = value</li>
+<li>arg</li>
+</ul>
+</dd></dl>
 
 <dl class="method">
-<dt id="src.addon.parameter.parameter_class.arg_set">
-<tt class="descname">arg_set</tt><big>(</big><em>arg</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.arg_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.arg_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="src.addon.parameter.parameter_class.has_arg">
+<tt class="descname">has_arg</tt><big>(</big><em>arg</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.has_arg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.has_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if arg is in the parameter_class. An arg is an entry without a value, like a filename.</p>
+</dd></dl>
 
 <dl class="method">
-<dt id="src.addon.parameter.parameter_class.flag_set">
-<tt class="descname">flag_set</tt><big>(</big><em>flag</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.flag_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.flag_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="src.addon.parameter.parameter_class.has_flag">
+<tt class="descname">has_flag</tt><big>(</big><em>flag</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.has_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.has_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if flag is set. A flag does not have a value. It is eighter on (has_flag -&gt; True) or off (has_flag -&gt; False)</p>
+</dd></dl>
 
 <dl class="method">
-<dt id="src.addon.parameter.parameter_class.param_set">
-<tt class="descname">param_set</tt><big>(</big><em>param</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.param_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.param_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="src.addon.parameter.parameter_class.has_param">
+<tt class="descname">has_param</tt><big>(</big><em>param</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.has_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.has_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the key param is set. A param is a key with a value.</p>
+</dd></dl>
 
 <dl class="method">
-<dt id="src.addon.parameter.parameter_class.contains">
-<tt class="descname">contains</tt><big>(</big><em>key</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.contains" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="src.addon.parameter.parameter_class.has_key">
+<tt class="descname">has_key</tt><big>(</big><em>key</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#parameter_class.has_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.parameter_class.has_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if key is a parameter, flag or arg. It does not the same as the dict.has_key function, since flags and args aren&#8217;t technically stored as keys.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="function">
 <dt id="src.addon.parameter.bash_if">
 <tt class="descclassname">src.addon.parameter.</tt><tt class="descname">bash_if</tt><big>(</big><em>flag</em>, <em>action</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#bash_if"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.bash_if" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>If the flag is in the parameter instance of parameter_class, the action will be executed by as a bash command if it is a string and be called otherwise (assumption action == python function with no args)</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.parameter.bash">
 <tt class="descclassname">src.addon.parameter.</tt><tt class="descname">bash</tt><big>(</big><em>cmd</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#bash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.bash" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Just calls os.system and outputs the command.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="src.addon.parameter.popen">
 <tt class="descclassname">src.addon.parameter.</tt><tt class="descname">popen</tt><big>(</big><em>cmd</em><big>)</big><a class="reference internal" href="_modules/src/addon/parameter.html#popen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.addon.parameter.popen" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>If one needs the output of the bash-command, this function can provide it. Works exactly like bash(cmd) but returns the output as a string.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-src.addon">

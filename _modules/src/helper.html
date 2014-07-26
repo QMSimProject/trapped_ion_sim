@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.helper &mdash; Trapped Ion Sim  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Trapped Ion Sim  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for src.helper</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python2.7</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># </span>
+<span class="c"># Author:  Mario S. Könz &lt;mskoenz@gmx.net&gt;</span>
+<span class="c"># Date:    23.07.2014 23:35:05 CEST</span>
+<span class="c"># File:    helper.py</span>
+
+<span class="kn">from</span> <span class="nn">.src_import</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.atom_class</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.vibron_class</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.useable_fct</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c">#=================== helper ===================</span>
+<div class="viewcode-block" id="hold_args"><a class="viewcode-back" href="../../src.html#src.helper.hold_args">[docs]</a><span class="k">def</span> <span class="nf">hold_args</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    helper function for :func:`create_obs` and :func:`create_collpase_ops`</span>
+<span class="sd">    </span>
+<span class="sd">    the function converts the pattern &quot;name(....)&quot; to &quot;name(&#39;....&#39;)&quot; if name is in the list names.</span>
+<span class="sd">    </span>
+<span class="sd">    :param names: a list of names who&#39;s argument should be stringified</span>
+<span class="sd">    :param expr: and exprssion in string form</span>
+<span class="sd">    :returns: the modified expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        
+        <span class="k">def</span> <span class="nf">find_matching_bracket</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">pos_open</span><span class="p">):</span>
+            <span class="k">assert</span><span class="p">(</span><span class="n">expr</span><span class="p">[</span><span class="n">pos_open</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;(&quot;</span><span class="p">)</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">pos_open</span> <span class="o">+</span> <span class="mi">1</span>
+            
+            <span class="n">opened</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">next_open</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+                <span class="n">next_close</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;)&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">next_open</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">next_close</span> <span class="o">&lt;</span> <span class="n">next_open</span><span class="p">:</span>
+                    <span class="n">opened</span> <span class="o">-=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">opened</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">pos_closed</span> <span class="o">=</span> <span class="n">next_close</span>
+                        <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">pos</span> <span class="o">=</span> <span class="n">next_close</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">opened</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">pos</span> <span class="o">=</span> <span class="n">next_open</span> <span class="o">+</span> <span class="mi">1</span>
+            
+            <span class="k">return</span> <span class="n">expr</span><span class="p">[:</span><span class="n">pos_open</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">expr</span><span class="p">[</span><span class="n">pos_open</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span> <span class="n">pos_closed</span><span class="p">],</span> <span class="n">expr</span><span class="p">[</span><span class="n">pos_closed</span><span class="p">:]</span>
+        
+        <span class="k">while</span> <span class="n">pos</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">ipos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">find_matching_bracket</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">ipos</span><span class="p">)</span>
+            <span class="n">expr</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">expr</span>
+
+</div>
+<div class="viewcode-block" id="tag_class"><a class="viewcode-back" href="../../src.html#src.helper.tag_class">[docs]</a><span class="k">class</span> <span class="nc">tag_class</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    this class is used by :func:`create_obs` and :func:`create_collpase_ops`</span>
+<span class="sd">    </span>
+<span class="sd">    :ivar idx: the index of an atom or vibron inside the atom-holder or vibron holder</span>
+<span class="sd">    :ivar offset: is 0 for atoms and len(atoms) for vibrons</span>
+<span class="sd">    :ivar N: is the dimension of the system with index idx in the global state</span>
+<span class="sd">    :ivar all_sys: is a static list that contains all atoms and vibrons. needs to be set before using tag_class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_sys</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="viewcode-block" id="tag_class.__init__"><a class="viewcode-back" href="../../src.html#src.helper.tag_class.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        the constructor just sets `idx`, `offset` and `N`</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        :param name: the name of the atom/vibron (not used yet, but perhaps useful in the future)</span>
+<span class="sd">        :param idx: the index of the syste,</span>
+<span class="sd">        :param offset: is set to zero if not specified</span>
+<span class="sd">        :returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">off</span> <span class="o">=</span> <span class="n">offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">all_sys</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">off</span><span class="p">]</span><span class="o">.</span><span class="n">N</span></div>
+    <span class="k">def</span> <span class="nf">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        an int cast</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: `idx` + `offset`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">off</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        takes an operator (Qobj) but in string form. The operator can contain N as a variable that this function will provide.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: a list with [`idx` + `offset`, evaluated operator (Qobj)]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="s">&quot;0&quot;</span>
+        
+        <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">off</span><span class="p">,</span> <span class="nb">eval</span><span class="p">(</span><span class="n">op</span><span class="p">)]</span>
+
+    </div>
+<div class="viewcode-block" id="tensor"><a class="viewcode-back" href="../../src.html#src.helper.tensor">[docs]</a><span class="k">def</span> <span class="nf">tensor</span><span class="p">(</span><span class="o">*</span><span class="n">ops</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    a tensor function. if the input is a Qobj nothing happens, thus tensor(tensor(x)) == tensor(x).</span>
+<span class="sd">    </span>
+<span class="sd">    :param ops: a list of return values of `tag_class.__call__` or a Qobj</span>
+<span class="sd">    :returns: an operator that acts on the full state containing the inserted `ops`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">q</span><span class="o">.</span><span class="n">Qobj</span><span class="p">):</span> <span class="c">#tensor(tensor(x)) == tensor(x)</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">sys_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">i_d</span> <span class="ow">in</span> <span class="n">zipi</span><span class="p">(</span><span class="n">atom_holder_</span><span class="o">.</span><span class="n">current_dims</span> <span class="o">+</span> <span class="n">vibron_holder_</span><span class="o">.</span><span class="n">current_dims</span><span class="p">):</span>
+        <span class="n">sys_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">qeye</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">ops</span><span class="p">:</span>
+        <span class="n">sys_list</span><span class="p">[</span><span class="n">op</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">op</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">q</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">sys_list</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Trapped Ion Sim  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Mario S. Koenz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
