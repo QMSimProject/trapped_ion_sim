@@ -5,6 +5,8 @@
 # Date:    23.06.2014 10:36:54 CEST
 # File:    gui.py
 
+# I only documented the non obviouse parts of the gui, since one needs to be familiar with QT in order to work on this file. 
+
 from qt_import import *
 from .integration_routine import integrate_cf
 from .plot import plot
@@ -206,7 +208,6 @@ class Q2PlotWidget(QWidget):
     
 class Q2DisplayWidget(QMainWindow):
     def __init__(self, parent = None):
-        
         super(Q2DisplayWidget, self).__init__(parent)
         self.laser_w = []
         self.atom_w = []
@@ -219,6 +220,8 @@ class Q2DisplayWidget(QMainWindow):
         #=================== widgets ===================
         self.itg_w = Q2IntegrationWidget(self)
         self.num_w = Q2NumberWidget(self)
+        self.plot = Q2PlotWidget(self)
+        self.collapse = QTextEdit(self)
         
         #=================== connects ===================
         self.num_w.laser_sb.valueChanged.connect(self.changed_sb)
@@ -259,13 +262,11 @@ class Q2DisplayWidget(QMainWindow):
         self.toolbar.addAction(itg_action)
         
         #=================== layout ===================
-        
-        self.plot = Q2PlotWidget(self)
-        self.collapse = QTextEdit(self)
         self.init_dynaminc_ui()
         
         self.statusBar()
         self.setWindowTitle("working title")
+    
     def init_dynaminc_ui(self):
         self.setup = QWidget(self)
         grid = QGridLayout()
@@ -369,7 +370,8 @@ class Q2DisplayWidget(QMainWindow):
         return res
     
     def parse(self):
-        from useable_fct import *
+        # parses the gui content into the canonical form for later use of the integrate and plot fct
+        from .useable_fct import *
         
         cf = {}
         #=================== parse lasers ===================
@@ -475,6 +477,8 @@ class Q2DisplayWidget(QMainWindow):
         return cf
     
     def save_parse(self):
+        # only saves the text for saving, since we want pi to stay pi and not change to 3.14 if loaded again
+        # the notation str(widget.text()) instead of just widget.text() is necessary bc of PyQt4. .text() returns a str in PySide but a QString in PyQt4, therefore the cast
         cf = {}
         #=================== parse lasers ===================
         cf["laser"] = []
@@ -540,6 +544,7 @@ class Q2DisplayWidget(QMainWindow):
         return cf
         
     def load_parse(self, cf):
+        # just set the text to the right widgets
         self.num_w.laser_sb.setValue(len(cf["laser"]))
         self.num_w.atom_sb.setValue(len(cf["atom"]))
         self.num_w.vibron_sb.setValue(len(cf["vibron"]))
@@ -582,8 +587,10 @@ class Q2DisplayWidget(QMainWindow):
         self.collapse.setText(cf["collapse"])
     
     def save(self):
+        # note the small difference between PySide and PyQt4
         print("save")
         fileName = QFileDialog.getSaveFileName(self, "Save File", "~/", "Pickle Files (*.pickle)")
+        
         if qt_binding == "PySide":
             file_name = str(fileName[0])
         else:
@@ -603,6 +610,7 @@ class Q2DisplayWidget(QMainWindow):
         self.setWindowTitle(file_name.split("/")[-1])
     
     def load(self):
+        # note the small difference between PySide and PyQt4
         print("load")
         fileName = QFileDialog.getOpenFileName(self, "Open File", "~/", "Pickle Files (*.pickle)")
         if qt_binding == "PySide":
@@ -624,7 +632,7 @@ class Q2DisplayWidget(QMainWindow):
         
         canonical_form = self.parse()
         
-        times, exp = integrate_cf(canonical_form, method = "mesolve")
+        times, exp = integrate_cf(canonical_form)
         plot(times, exp, canonical_form)
     
 def run_gui():

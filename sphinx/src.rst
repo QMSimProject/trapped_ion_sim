@@ -27,6 +27,14 @@ src.gui module
     :undoc-members:
     :show-inheritance:
 
+src.helper module
+-----------------
+
+.. automodule:: src.helper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 src.integration_routine module
 ------------------------------
 
@@ -51,6 +59,14 @@ src.matrix_plot module
     :undoc-members:
     :show-inheritance:
 
+src.plot module
+---------------
+
+.. automodule:: src.plot
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 src.qt_import module
 --------------------
 
@@ -63,6 +79,14 @@ src.src_import module
 ---------------------
 
 .. automodule:: src.src_import
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+src.useable_fct module
+----------------------
+
+.. automodule:: src.useable_fct
     :members:
     :undoc-members:
     :show-inheritance:

@@ -12,6 +12,15 @@ from .useable_fct import *
 
 #=================== helper ===================
 def hold_args(names, expr):
+    """
+    helper function for :func:`create_obs` and :func:`create_collpase_ops`
+    
+    the function converts the pattern "name(....)" to "name('....')" if name is in the list names.
+    
+    :param names: a list of names who's argument should be stringified
+    :param expr: and exprssion in string form
+    :returns: the modified expression
+    """
     for n in names:
         pos = 0
         pos = expr.find(n)
@@ -48,15 +57,41 @@ def hold_args(names, expr):
 
 
 class tag_class():
+    """
+    this class is used by :func:`create_obs` and :func:`create_collpase_ops`
+    
+    :ivar idx: the index of an atom or vibron inside the atom-holder or vibron holder
+    :ivar offset: is 0 for atoms and len(atoms) for vibrons
+    :ivar N: is the dimension of the system with index idx in the global state
+    :ivar all_sys: is a static list that contains all atoms and vibrons. needs to be set before using tag_class.
+    """
     all_sys = []
     def __init__ (self, name, idx, offset = 0):
-        self.name = name
+        """
+        the constructor just sets `idx`, `offset` and `N`
+        
+        
+        :param name: the name of the atom/vibron (not used yet, but perhaps useful in the future)
+        :param idx: the index of the syste,
+        :param offset: is set to zero if not specified
+        :returns: None
+        """
         self.idx = idx
         self.off = offset
         self.N = self.__class__.all_sys[self.idx + self.off].N
     def __int__(self):
+        """
+        an int cast
+        
+        :returns: `idx` + `offset`
+        """
         return self.idx + self.off
     def __call__(self, op):
+        """
+        takes an operator (Qobj) but in string form. The operator can contain N as a variable that this function will provide.
+        
+        :returns: a list with [`idx` + `offset`, evaluated operator (Qobj)]
+        """
         if op == '':
             op = "0"
         
@@ -65,6 +100,12 @@ class tag_class():
 
     
 def tensor(*ops):
+    """
+    a tensor function. if the input is a Qobj nothing happens, thus tensor(tensor(x)) == tensor(x).
+    
+    :param ops: a list of return values of `tag_class.__call__` or a Qobj
+    :returns: an operator that acts on the full state containing the inserted `ops`
+    """
     if isinstance(ops[0], q.Qobj): #tensor(tensor(x)) == tensor(x)
         return ops[0]
     sys_list = []

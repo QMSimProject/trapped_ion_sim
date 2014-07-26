@@ -14,7 +14,7 @@ ALL_COLORS_IMPL = ["\033[2J\033[100A", "\033[0;30m", "\033[1;30m", "\033[0;31m",
 if NO_COLOR:
     for i in range(len(ALL_COLORS)):
         exec(ALL_COLORS[i] + '_ = ""')
-        exec("def " + ALL_COLORS[i] + "(out, end = \"\\n\"):\n\tprint(" + ALL_COLORS[i] +  "_ + str(out) + NONE_ + end),")
+        exec("def " + ALL_COLORS[i] + "(out, end = \"\\n\"):\n\tprint(str(out) + end),")
 else:
     for i in range(len(ALL_COLORS)):
         exec(ALL_COLORS[i] + '_ = "' + ALL_COLORS_IMPL[i] + '"')

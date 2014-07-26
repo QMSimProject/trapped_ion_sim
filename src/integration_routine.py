@@ -28,9 +28,25 @@ def create_phi():
     return q.tensor(atom_holder_.state(), vibron_holder_.state()).unit()
 
 class res_collector:
+    """
+    the mesovle as well as other solve methods of qutip take an list of Qobj matrices as observables or a callback function. this class contains the callback functions as well as the datastructure that collects the data. it is done in the same fashion as in mesolve.py of the qutip framework. the callback is only used if there are measurements that aren't represented by the form expect(operator, state).
+    """
     def __init__(self):
+        """
+        the constructor initializes the class with one timestep and no functions
+        
+        :returns: None
+        """
         self.init([], 1)
     def init(self, fct, n_tsteps):
+        """
+        init is used by :func:`create_obs` if there are non expectation value (see class description) measurement functions.
+        
+        :param fct: is a list of python functions with the signature: f(time, state) and return a float
+        :param n_tsteps: has to be the same as cf["measure"] (represents how many measurements are taken during the integration)
+        
+        :returns: None
+        """
         self.t_idx = 0
         self.times = np.zeros(n_tsteps)
         self.expect = []
@@ -38,6 +54,14 @@ class res_collector:
         for n in range(len(self.fct)):
             self.expect.append(np.zeros(n_tsteps))
     def measure(self, t, state):
+        """
+        this function will call all functions in `fct` and store the return value.
+        
+        :param t: the time at which the measurement is taken
+        :param state: the density matrix representing the state at time t
+        
+        :returns: None
+        """
         i = self.t_idx
         self.times[i] = t
         for f, i_f in zipi(self.fct):
@@ -46,12 +70,27 @@ class res_collector:
         self.t_idx += 1
 
 res = res_collector()
+"""
+the only instance that should be used in the framework.
+"""
+
 
 def callback_fct(t, state):
+    """
+    this is the callback function given to the solver routines. it calls `res.measure`
+    
+    :param t: the time at which the measurement is taken
+    :param state: the density matrix representing the state at time t
+    
+    :returns: None
+    """
     global res
     res.measure(t, q.Qobj(state))
     
 def create_obs(cf):
+    """
+    TDB
+    """
     global res
     flatten = lambda l: [y for x in l for y in x]
     
@@ -135,6 +174,17 @@ def create_obs(cf):
         return callback_fct, laser_fct, callback
 
 def create_collpase_ops(cf):
+    """
+    this function creates the collpase operators based on the string inputs on cf["collapse"]. examples:
+    - "atom1(fock_dm(N, 2))" inside the atom1 function any valid expression that results in a Qobj of the right dimension can be given
+    - "0.5*atom1(...)" doesn't work, since atom1(...) is not an operator from the programms perspective
+    - "0.5*tensor(atom1(...))" works since tensor transforms the atom1 obj into a Qobj, where 0.5* is valid code
+    - "tensor(atom1(...), atom5(...))" the tensor automatically produces the right global state
+    - timedependent collapse ops not possible yet, but the function can be expanded
+    
+    :param cf: canonical form of the integration problem
+    :return: a list of operators
+    """
     col = cf["collapse"]
     
     a_nm = [a[0] for a in cf["atom"]]
@@ -163,8 +213,8 @@ def create_hamiltonian(atoms, vibrons, lasers, _rabi, _eta, **kwargs):
     :param lasers: a list of :class:`laser`
     :param _rabi: a list containing the rabi-frequency with the following dimensions: list[N_lasers][N_atoms][N_transitions_per_atom]. since the amount of transitions can be different for each atom, the last dimension will depend on the atom and is not the same for all atoms.
     :param _eta: a list containing the lamb-dicke parameter with the following dimensions: list[N_atoms][N_vibrons]
-    :param **kwargs: key word arguments for additional optional parameters like cutoff. If no cutoff is given, it will be set to `default_cutoff`.
-    :returns: the hamiltonian for the integration
+    :param **kwargs: key word arguments for additional optional parameters like cutoff. if no cutoff is given, it will be set to `default_cutoff`. hbar is an mandatory kwarg and is the value for the reduced planck constant.
+    :returns: a list with [operator, pattern, time dependency] entries for each component in the hamiltonian as well as a dictionary that holds all variables that can be found in the time dependency cython strings.
     """
     global vibron_holder_
     
@@ -256,6 +306,9 @@ import time
 import datetime
 
 def integrate_cf(cf, **kwargs):
+    """
+    TDB
+    """
     global res
     GREEN("start integration")
     start_time = time.time()
