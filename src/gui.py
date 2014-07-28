@@ -592,9 +592,9 @@ class Q2DisplayWidget(QMainWindow):
         fileName = QFileDialog.getSaveFileName(self, "Save File", "~/", "Pickle Files (*.pickle)")
         
         if qt_binding == "PySide":
-            file_name = str(fileName[0])
+            file_name = unicode(fileName[0])
         else:
-            file_name = str(fileName)
+            file_name = unicode(fileName)
         
         if file_name == "":
             return
@@ -614,9 +614,9 @@ class Q2DisplayWidget(QMainWindow):
         print("load")
         fileName = QFileDialog.getOpenFileName(self, "Open File", "~/", "Pickle Files (*.pickle)")
         if qt_binding == "PySide":
-            file_name = str(fileName[0])
+            file_name = unicode(fileName[0])
         else:
-            file_name = str(fileName)
+            file_name = unicode(fileName)
             
         if file_name == "":
             return
