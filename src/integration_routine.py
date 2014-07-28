@@ -89,7 +89,18 @@ def callback_fct(t, state):
     
 def create_obs(cf):
     """
-    TDB
+    creates the observables specified in cf["plot"]. one can use a simplified language to formulate the observables in an more convenient way. if a certain form is not supported it can be expanded to do so. For now valid discription code is:
+    
+    - "fidelity(atom1(...), state); label" important is the "; " before writing the label (how the plot line is called)
+    - "atom1(...); label" this will produce an operator. the expectation value will be measured 
+    - "tensor(atom1(...), atom2(...)); label"
+    - "laser1(.3); label" the argument in laser1 just determines the y-location in the plot. it has no computational meaning
+    
+    :param cf: canonical form of the integration problem
+    :return: obs, laser_obs, callback
+    - `obs`: is eighter a list of operators or a python function (callback, see QuTip mesolve)
+    - `laser_obs`: a list of functions that are calculated after the integration, since the lasers are independent of the state
+    - `callback`: a boolean value that states if the callback or the obs_list is returned. this is done for speedup, since the callback is slower and only used if needed.
     """
     global res
     flatten = lambda l: [y for x in l for y in x]
@@ -176,6 +187,7 @@ def create_obs(cf):
 def create_collpase_ops(cf):
     """
     this function creates the collpase operators based on the string inputs on cf["collapse"]. examples:
+    
     - "atom1(fock_dm(N, 2))" inside the atom1 function any valid expression that results in a Qobj of the right dimension can be given
     - "0.5*atom1(...)" doesn't work, since atom1(...) is not an operator from the programms perspective
     - "0.5*tensor(atom1(...))" works since tensor transforms the atom1 obj into a Qobj, where 0.5* is valid code
@@ -307,7 +319,10 @@ import datetime
 
 def integrate_cf(cf, **kwargs):
     """
-    TDB
+    this function implements the event integration for the `cf`. the event integration recalculates the hamiltonian everytime a laser is switched on or off. this avoids to recalculate parts of the hamiltonian, that are zero anyways during a certain time frame.
+    
+    :param cf: the canonical form of the integration problem
+    :return: (times, exp) a list with the times and a list of lists for every observed property exp[#obs][#measure]
     """
     global res
     GREEN("start integration")
