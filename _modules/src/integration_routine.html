@@ -138,7 +138,18 @@
     </div>
 <div class="viewcode-block" id="create_obs"><a class="viewcode-back" href="../../src.html#src.integration_routine.create_obs">[docs]</a><span class="k">def</span> <span class="nf">create_obs</span><span class="p">(</span><span class="n">cf</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    TDB</span>
+<span class="sd">    creates the observables specified in cf[&quot;plot&quot;]. one can use a simplified language to formulate the observables in an more convenient way. if a certain form is not supported it can be expanded to do so. For now valid discription code is:</span>
+<span class="sd">    </span>
+<span class="sd">    - &quot;fidelity(atom1(...), state); label&quot; important is the &quot;; &quot; before writing the label (how the plot line is called)</span>
+<span class="sd">    - &quot;atom1(...); label&quot; this will produce an operator. the expectation value will be measured </span>
+<span class="sd">    - &quot;tensor(atom1(...), atom2(...)); label&quot;</span>
+<span class="sd">    - &quot;laser1(.3); label&quot; the argument in laser1 just determines the y-location in the plot. it has no computational meaning</span>
+<span class="sd">    </span>
+<span class="sd">    :param cf: canonical form of the integration problem</span>
+<span class="sd">    :return: obs, laser_obs, callback</span>
+<span class="sd">    - `obs`: is eighter a list of operators or a python function (callback, see QuTip mesolve)</span>
+<span class="sd">    - `laser_obs`: a list of functions that are calculated after the integration, since the lasers are independent of the state</span>
+<span class="sd">    - `callback`: a boolean value that states if the callback or the obs_list is returned. this is done for speedup, since the callback is slower and only used if needed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">res</span>
     <span class="n">flatten</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
@@ -225,6 +236,7 @@
 <div class="viewcode-block" id="create_collpase_ops"><a class="viewcode-back" href="../../src.html#src.integration_routine.create_collpase_ops">[docs]</a><span class="k">def</span> <span class="nf">create_collpase_ops</span><span class="p">(</span><span class="n">cf</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    this function creates the collpase operators based on the string inputs on cf[&quot;collapse&quot;]. examples:</span>
+<span class="sd">    </span>
 <span class="sd">    - &quot;atom1(fock_dm(N, 2))&quot; inside the atom1 function any valid expression that results in a Qobj of the right dimension can be given</span>
 <span class="sd">    - &quot;0.5*atom1(...)&quot; doesn&#39;t work, since atom1(...) is not an operator from the programms perspective</span>
 <span class="sd">    - &quot;0.5*tensor(atom1(...))&quot; works since tensor transforms the atom1 obj into a Qobj, where 0.5* is valid code</span>
@@ -356,7 +368,10 @@
 
 <div class="viewcode-block" id="integrate_cf"><a class="viewcode-back" href="../../src.html#src.integration_routine.integrate_cf">[docs]</a><span class="k">def</span> <span class="nf">integrate_cf</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    TDB</span>
+<span class="sd">    this function implements the event integration for the `cf`. the event integration recalculates the hamiltonian everytime a laser is switched on or off. this avoids to recalculate parts of the hamiltonian, that are zero anyways during a certain time frame.</span>
+<span class="sd">    </span>
+<span class="sd">    :param cf: the canonical form of the integration problem</span>
+<span class="sd">    :return: (times, exp) a list with the times and a list of lists for every observed property exp[#obs][#measure]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">res</span>
     <span class="n">GREEN</span><span class="p">(</span><span class="s">&quot;start integration&quot;</span><span class="p">)</span>
