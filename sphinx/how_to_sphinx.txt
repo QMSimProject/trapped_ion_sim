@@ -5,6 +5,7 @@ sphinx-quickstart
 sys.path.insert(0, os.path.abspath('..'))
 import src
 
+for imported members in init use :imported-members: in top level .rst
 
 # add smaller tweaks
 #------------------- to ensure that __init__ is shown ------------------- 

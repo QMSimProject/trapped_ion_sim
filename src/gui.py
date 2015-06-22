@@ -133,6 +133,7 @@ class Q2IntegrationWidget(QWidget):
         self.interval = QLineEdit(self)
         self.measure = QLineEdit(self)
         self.cutoff = QLineEdit(self)
+        self.adv_phi = QLineEdit(self)
         
         #------------------- settings ------------------- 
         self.hbar.setPlaceholderText("hbar")
@@ -140,11 +141,13 @@ class Q2IntegrationWidget(QWidget):
         self.interval.setPlaceholderText("intervall")
         self.measure.setPlaceholderText("N")
         self.cutoff.setPlaceholderText("cutoff")
+        self.adv_phi.setPlaceholderText("advanced phi")
         
         self.hbar.setStatusTip("value for the reduced planck constant")
         self.interval.setStatusTip("integration intervall e.g: [0, 10*pi]")
         self.measure.setStatusTip("numbers of measurements")
         self.cutoff.setStatusTip("cutoff frequency for rwa")
+        self.adv_phi.setStatusTip("input an entangled phi")
         
         #=================== layout ===================
         grid = QGridLayout()
@@ -153,6 +156,7 @@ class Q2IntegrationWidget(QWidget):
         grid.addWidget(self.interval     , 0, 1, 1, 1)
         grid.addWidget(self.measure      , 0, 2, 1, 1)
         grid.addWidget(self.cutoff       , 0, 3, 1, 1)
+        grid.addWidget(self.adv_phi      , 0, 4, 1, 1)
         self.setLayout(grid)
         
         self.show()
@@ -444,6 +448,11 @@ class Q2DisplayWidget(QMainWindow):
         cf["lower"] = eval(str(self.itg_w.interval.text()))[0]
         cf["measure"] = eval(str(self.itg_w.measure.text()))
         cf["cutoff"] = eval(str(self.itg_w.cutoff.text()))
+        phi = str(self.itg_w.adv_phi.text())
+        if phi == "":
+            cf["adv_phi"] = ""
+        else:
+            cf["adv_phi"] = eval(phi)
         
         #=================== parse plot ===================
         pl = str(self.plot.text.toPlainText())
@@ -536,6 +545,7 @@ class Q2DisplayWidget(QMainWindow):
         cf["interval"] = str(self.itg_w.interval.text())
         cf["measure"] = str(self.itg_w.measure.text())
         cf["cutoff"] = str(self.itg_w.cutoff.text())
+        cf["adv_phi"] = str(self.itg_w.adv_phi.text())
         
         #=================== parse plot/hbar/collapse ===================
         cf["plot"] = str(self.plot.text.toPlainText())
@@ -580,6 +590,7 @@ class Q2DisplayWidget(QMainWindow):
         self.itg_w.interval.setText(cf["interval"])
         self.itg_w.measure.setText(cf["measure"])
         self.itg_w.cutoff.setText(cf["cutoff"])
+        self.itg_w.adv_phi.setText(cf["adv_phi"])
         
         #=================== parse plot/hbar/collapse ===================
         self.plot.text.setText(cf["plot"])
@@ -624,6 +635,7 @@ class Q2DisplayWidget(QMainWindow):
         f = open(file_name, 'rb')
         data = pickle.load(f)
         f.close()
+        data["adv_phi"] = data.get("adv_phi", "")
         self.load_parse(data)
         
         self.setWindowTitle(file_name.split("/")[-1])

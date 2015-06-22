@@ -397,7 +397,10 @@ def integrate_cf(cf, **kwargs):
     
     #------------------- create states/obs ------------------- 
     
-    phi = create_phi()
+    if cf["adv_phi"] == "":
+        phi = create_phi()
+    else:
+        phi = cf["adv_phi"]
     
     obs, laser_ops, callback = create_obs(cf)
     
