@@ -448,6 +448,7 @@ class Q2DisplayWidget(QMainWindow):
         cf["lower"] = eval(str(self.itg_w.interval.text()))[0]
         cf["measure"] = eval(str(self.itg_w.measure.text()))
         cf["cutoff"] = eval(str(self.itg_w.cutoff.text()))
+
         phi = str(self.itg_w.adv_phi.text())
         if phi == "":
             cf["adv_phi"] = ""
