@@ -400,7 +400,7 @@ def integrate_cf(cf, **kwargs):
     if cf["adv_phi"] == "":
         phi = create_phi()
     else:
-        phi = cf["adv_phi"]
+        phi = q.Qobj(cf["adv_phi"])
     
     obs, laser_ops, callback = create_obs(cf)
     
