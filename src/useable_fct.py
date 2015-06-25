@@ -23,3 +23,13 @@ from qutip import num
 from numpy import pi
 from numpy import diag
 from numpy import sqrt
+import qutip as _q
+
+def tensor(*args):
+    to_tensor = []
+    for a in args:
+        if isinstance(a, _q.Qobj):
+            to_tensor.append(a)
+        else:
+            to_tensor.append(_q.Qobj(a))
+    return _q.tensor(*to_tensor)
